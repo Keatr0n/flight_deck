@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flight_deck/models/place.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -28,6 +30,19 @@ class Stay {
       places: (json['places'] as List).map<Place>((e) => Place.fromJson(e)).toList(),
       location: LatLng(json['latitude'], json['longitude']),
       name: json['name'],
+    );
+  }
+
+  factory Stay.random() {
+    final randStart = DateTime.now().add(Duration(days: Random().nextInt(100)));
+
+    return Stay(
+      start: randStart,
+      end: randStart.add(Duration(days: Random().nextInt(30))),
+      notes: "Some notes",
+      location: LatLng(Random().nextInt(180) - 90, Random().nextInt(360) - 180),
+      places: [Place.random(), Place.random(), Place.random()],
+      name: "Random Stay ${Random().nextInt(100)}",
     );
   }
 

@@ -11,7 +11,7 @@ class FlightDeckDB {
 
   static const String fileName = 'flightDeckDB.json';
 
-  final bool _initialized = false;
+  bool _initialized = false;
 
   List<Stay> _stays = [];
   List<Stay> get stays => _stays;
@@ -27,9 +27,14 @@ class FlightDeckDB {
       throw Exception(jsonString);
     }
 
-    final jsonData = jsonDecode(jsonString);
+    if (jsonString.isEmpty) {
+      _initialized = true;
+      return;
+    }
 
+    final jsonData = jsonDecode(jsonString);
     _stays = (jsonData['stays'] as List).map<Stay>((e) => Stay.fromJson(e)).toList();
+    _initialized = true;
 
     return;
   }

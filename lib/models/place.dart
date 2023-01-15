@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:latlong2/latlong.dart';
 
 class Place {
@@ -19,6 +21,15 @@ class Place {
       address: json['address'],
       location: LatLng(json['latitude'], json['longitude']),
       notes: json['notes'],
+    );
+  }
+
+  factory Place.random() {
+    return Place(
+      name: "Random Place ${Random().nextInt(100)}",
+      address: "Random Address ${Random().nextInt(100)}",
+      location: LatLng(Random().nextInt(180) - 90, Random().nextInt(360) - 180),
+      notes: "Some notes",
     );
   }
 

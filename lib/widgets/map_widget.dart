@@ -78,7 +78,10 @@ class _MapWidgetState extends State<MapWidget> {
       height: 400,
       width: 400,
       child: FlutterMap(
-        options: MapOptions(center: initialLocation, zoom: initialZoom),
+        options: MapOptions(
+          center: initialLocation,
+          zoom: initialZoom,
+        ),
         children: [
           VectorTileLayer(
             theme: theme,
