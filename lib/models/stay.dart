@@ -11,6 +11,9 @@ class Stay {
   final LatLng location;
   final String? name;
 
+  /// if the date is fixed, it will not be automatically updated unless the user explicitly changes it
+  final bool isFixedDate;
+
   int get stayLength => end.difference(start).inDays;
 
   Stay({
@@ -20,6 +23,7 @@ class Stay {
     required this.location,
     required this.places,
     this.name,
+    required this.isFixedDate,
   });
 
   factory Stay.fromJson(Map<String, dynamic> json) {
@@ -30,6 +34,7 @@ class Stay {
       places: (json['places'] as List).map<Place>((e) => Place.fromJson(e)).toList(),
       location: LatLng(json['latitude'], json['longitude']),
       name: json['name'],
+      isFixedDate: json['isFixedDate'],
     );
   }
 
@@ -40,9 +45,10 @@ class Stay {
       start: randStart,
       end: randStart.add(Duration(days: Random().nextInt(30))),
       notes: "Some notes",
-      location: LatLng(Random().nextInt(180) - 90, Random().nextInt(360) - 180),
+      location: LatLng((Random().nextInt(180000) - 90000) / 1000, (Random().nextInt(360000) - 180000) / 1000),
       places: [Place.random(), Place.random(), Place.random()],
       name: "Random Stay ${Random().nextInt(100)}",
+      isFixedDate: Random().nextBool(),
     );
   }
 
@@ -55,12 +61,13 @@ class Stay {
       'latitude': location.latitude,
       'longitude': location.longitude,
       'name': name,
+      'isFixedDate': isFixedDate,
     };
   }
 
   @override
   String toString() {
-    return 'Stay $name | $start -> $end | ${location.latitude},${location.longitude} | $notes | $places';
+    return 'Stay $name | $start -> $end | ${isFixedDate ? "with fixed dates" : "without fixed dates"} | ${location.latitude},${location.longitude} | $notes | $places';
   }
 
   @override

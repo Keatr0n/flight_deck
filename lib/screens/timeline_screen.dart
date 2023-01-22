@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:flight_deck/models/flight_deck_db.dart';
 import 'package:flight_deck/models/stay.dart';
 import 'package:flight_deck/widgets/stay_widget.dart';
 import 'package:flutter/material.dart';
@@ -10,70 +13,120 @@ class TimelineScreen extends StatefulWidget {
 }
 
 class _TimelineScreenState extends State<TimelineScreen> {
-  final controllerMini = ScrollController();
-  final controller = ScrollController();
+  List<Stay> get stays => FlightDeckDB.instance.stays;
+
+  double actualWidth() {
+    double width = 0;
+
+    DateTime currentMonth = DateTime(stays.first.start.year, stays.first.start.month);
+    final int totalMonths = ((stays.last.end.year - stays.first.start.year) * 12) + ((stays.last.end.month + 1) - stays.first.start.month);
+
+    for (var i = 0; i < totalMonths; i++) {
+      final DateTime nextMonth = currentMonth.month == 12 ? DateTime(currentMonth.year + 1, 1) : DateTime(currentMonth.year, currentMonth.month + 1);
+      width += 20 * nextMonth.difference(currentMonth).inDays;
+      currentMonth = nextMonth;
+    }
+
+    return width;
+  }
+
+  List<Widget> buildStay(List<Stay> stays) {
+    final List<Widget> miniStayWidgets = [];
+
+    final originOffset = DateTime(stays.first.start.year, stays.first.start.month, 1);
+
+    for (var i = 0; i < stays.length; i++) {
+      miniStayWidgets.add(Positioned(
+        left: stays[i].start.difference(originOffset).inDays * 20,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            StayWidget(stay: stays[i], isMini: true),
+            Center(
+              child: Container(
+                transformAlignment: Alignment.center,
+                color: Theme.of(context).primaryColor,
+                height: i % 2 == 0 ? 30 : 150,
+                width: 2,
+              ),
+            ),
+            Container(
+              color: Theme.of(context).primaryColor,
+              width: stays[i].stayLength * 20,
+              height: 2,
+            ),
+            SizedBox(height: i % 2 == 0 ? 4 : 1),
+          ],
+        ),
+      ));
+    }
+
+    return miniStayWidgets;
+  }
+
+  List<Widget> calendar() {
+    final int totalMonths = ((stays.last.end.year - stays.first.start.year) * 12) + ((stays.last.end.month + 1) - stays.first.start.month);
+    final List<Widget> timeline = [];
+
+    DateTime currentMonth = DateTime(stays.first.start.year, stays.first.start.month);
+
+    for (var i = 0; i < totalMonths; i++) {
+      final DateTime nextMonth = currentMonth.month == 12 ? DateTime(currentMonth.year + 1, 1) : DateTime(currentMonth.year, currentMonth.month + 1);
+
+      timeline.add(
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              color: Theme.of(context).primaryColor,
+              width: currentMonth.difference(nextMonth).inDays.abs() * 20,
+              height: 2,
+            ),
+            Container(
+              color: Theme.of(context).primaryColor,
+              width: 2,
+              height: 30,
+            ),
+            Text("${currentMonth.month}/${currentMonth.year}"),
+          ],
+        ),
+      );
+
+      currentMonth = nextMonth;
+    }
+
+    return timeline;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final stays = [
-      Stay.random(),
-      Stay.random(),
-      Stay.random(),
-      Stay.random(),
-      Stay.random(),
-      Stay.random(),
-      Stay.random(),
-      Stay.random(),
-      Stay.random(),
-    ];
+    if (stays.isEmpty) return const Center(child: Text("ERROR 404: No stays found"));
 
-    final itemHeight = MediaQuery.of(context).size.height * 0.8;
-    final itemWidth = MediaQuery.of(context).size.width * 0.8;
-
-    return Column(
-      children: [
-        SizedBox(
-          height: itemHeight / 8,
-          child: GestureDetector(
-            onHorizontalDragUpdate: (details) {
-              if (controllerMini.offset - details.delta.dx < 0 || controllerMini.offset - details.delta.dx > controllerMini.position.maxScrollExtent) return;
-              controllerMini.jumpTo(controllerMini.offset - details.delta.dx);
-              controller.jumpTo(controller.offset - (details.delta.dx * 4));
-            },
-            child: ListView(
-              controller: controllerMini,
-              physics: const NeverScrollableScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              children: [
-                SizedBox(width: itemWidth / 2),
-                ...stays.map((e) => SizedBox(height: itemHeight / 4, width: itemWidth / 4, child: FittedBox(fit: BoxFit.scaleDown, child: StayWidget(stay: e, isMini: true)))).toList(),
-                SizedBox(width: itemWidth / 2),
-              ], //FlightDeckDB.instance.stays.map((stay) => StayWidget(stay: stay)).toList(),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Center(
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              height: 500,
+              width: actualWidth(),
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: buildStay(stays),
+              ),
             ),
-          ),
-        ),
-        const SizedBox(height: 20),
-        SizedBox(
-          height: itemHeight,
-          child: GestureDetector(
-            onHorizontalDragUpdate: (details) {
-              if (controllerMini.offset - details.delta.dx < 0 || controllerMini.offset - details.delta.dx > controllerMini.position.maxScrollExtent) return;
-              controllerMini.jumpTo(controllerMini.offset - (details.delta.dx / 4));
-              controller.jumpTo(controller.offset - details.delta.dx);
-            },
-            child: ListView(
-              controller: controller,
-              physics: const NeverScrollableScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              children: [
-                SizedBox(width: itemWidth / 8),
-                ...stays.map((e) => SizedBox(height: itemHeight, width: itemWidth, child: StayWidget(stay: e))).toList(),
-                SizedBox(width: itemWidth / 8)
-              ], //FlightDeckDB.instance.stays.map((stay) => StayWidget(stay: stay)).toList(),
+            const SizedBox(height: 20),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: calendar(),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

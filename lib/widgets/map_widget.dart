@@ -11,9 +11,11 @@ import 'package:vector_map_tiles/vector_map_tiles.dart';
 import 'package:vector_tile_renderer/vector_tile_renderer.dart' as vtr;
 
 class MapWidget extends StatefulWidget {
-  const MapWidget({super.key, required this.locations});
+  const MapWidget({super.key, required this.locations, this.highlightedIndex, this.onTap});
 
   final List<LatLng> locations;
+  final int? highlightedIndex;
+  final void Function(int? index)? onTap;
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
@@ -28,12 +30,12 @@ class _MapWidgetState extends State<MapWidget> {
   List<Marker> _buildMarkers() {
     final output = <Marker>[];
 
-    for (final location in widget.locations) {
+    for (var i = 0; i < widget.locations.length; i++) {
       output.add(Marker(
-        width: 80.0,
-        height: 80.0,
-        point: location,
-        builder: (ctx) => const Icon(Icons.fullscreen_exit, color: Colors.red),
+        width: i == widget.highlightedIndex ? 110.0 : 80.0,
+        height: i == widget.highlightedIndex ? 110.0 : 80.0,
+        point: widget.locations[i],
+        builder: (ctx) => Icon(i == widget.highlightedIndex ? Icons.fullscreen_exit : Icons.fullscreen_sharp, color: Colors.red),
       ));
     }
 
@@ -75,12 +77,17 @@ class _MapWidgetState extends State<MapWidget> {
     }
 
     return SizedBox(
-      height: 400,
-      width: 400,
+      height: MediaQuery.of(context).size.height * 0.4,
+      width: MediaQuery.of(context).size.height * 0.3,
       child: FlutterMap(
         options: MapOptions(
           center: initialLocation,
           zoom: initialZoom,
+          onTap: (tapPosition, point) {
+            final index = widget.locations.indexWhere((el) => MapUtils.getDistance(el, point) < 1000);
+
+            widget.onTap?.call(index == -1 ? null : index);
+          },
         ),
         children: [
           VectorTileLayer(

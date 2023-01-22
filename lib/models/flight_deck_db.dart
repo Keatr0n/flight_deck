@@ -13,7 +13,14 @@ class FlightDeckDB {
 
   bool _initialized = false;
 
-  List<Stay> _stays = [];
+  List<Stay> _stays = [
+    Stay.random(),
+    Stay.random(),
+    Stay.random(),
+    Stay.random(),
+    Stay.random(),
+    Stay.random(),
+  ]..sort((a, b) => a.start.compareTo(b.start));
   List<Stay> get stays => _stays;
 
   Completer<void> _saveCompleter = Completer<void>();
@@ -55,16 +62,19 @@ class FlightDeckDB {
 
   void addStay(Stay stay) {
     _stays.add(stay);
+    _stays.sort((a, b) => a.start.compareTo(b.start));
     save();
   }
 
   void deleteStay(Stay stay) {
     _stays.remove(stay);
+    _stays.sort((a, b) => a.start.compareTo(b.start));
     save();
   }
 
   void updateStay(int index, Stay stay) {
     _stays[index] = stay;
+    _stays.sort((a, b) => a.start.compareTo(b.start));
     save();
   }
 }
