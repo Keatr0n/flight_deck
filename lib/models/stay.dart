@@ -52,6 +52,36 @@ class Stay {
     );
   }
 
+  factory Stay.empty() {
+    return Stay(
+      start: DateTime.now(),
+      end: DateTime.now(),
+      location: LatLng(0, 0),
+      places: [],
+      isFixedDate: false,
+    );
+  }
+
+  Stay copyWith({
+    DateTime? start,
+    DateTime? end,
+    String? notes,
+    List<Place>? places,
+    LatLng? location,
+    String? name,
+    bool? isFixedDate,
+  }) {
+    return Stay(
+      start: start ?? this.start,
+      end: end ?? this.end,
+      notes: notes ?? this.notes,
+      places: places ?? this.places,
+      location: location ?? this.location,
+      name: name ?? this.name,
+      isFixedDate: isFixedDate ?? this.isFixedDate,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'start': start.toIso8601String(),

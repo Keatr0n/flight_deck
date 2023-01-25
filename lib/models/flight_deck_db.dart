@@ -11,19 +11,15 @@ class FlightDeckDB {
 
   static const String fileName = 'flightDeckDB.json';
 
+  final StreamController _updateDbStreamController = StreamController.broadcast();
+  Stream get updateDbStream => _updateDbStreamController.stream;
+
   bool _initialized = false;
 
-  List<Stay> _stays = [
-    Stay.random(),
-    Stay.random(),
-    Stay.random(),
-    Stay.random(),
-    Stay.random(),
-    Stay.random(),
-  ]..sort((a, b) => a.start.compareTo(b.start));
+  List<Stay> _stays = [];
   List<Stay> get stays => _stays;
 
-  Completer<void> _saveCompleter = Completer<void>();
+  Completer<void> _saveCompleter = Completer<void>()..complete();
 
   Future<void> init() async {
     if (_initialized) return;
@@ -47,7 +43,9 @@ class FlightDeckDB {
   }
 
   Future<void> save() async {
+    _updateDbStreamController.add(null);
     if (!_saveCompleter.isCompleted) await _saveCompleter.future;
+
     _saveCompleter = Completer<void>();
 
     final jsonString = jsonEncode({

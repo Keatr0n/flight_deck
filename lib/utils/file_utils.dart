@@ -10,12 +10,17 @@ class FileUtils {
 
   static Future<File> getLocalFile(String filename) async {
     final path = await getLocalPath();
+
+    if (Platform.isWindows) return File('$path\\$filename');
     return File('$path/$filename');
   }
 
   static Future<String> readLocalFile(String filename) async {
     try {
       final file = await getLocalFile(filename);
+      if (!(await file.exists())) {
+        return "";
+      }
       String contents = await file.readAsString();
       return contents;
     } catch (e) {

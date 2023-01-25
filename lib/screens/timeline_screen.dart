@@ -80,10 +80,26 @@ class _TimelineScreenState extends State<TimelineScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              color: Theme.of(context).primaryColor,
-              width: currentMonth.difference(nextMonth).inDays.abs() * 20,
-              height: 2,
+            Row(
+              children: [
+                for (var l = 0; l < currentMonth.difference(nextMonth).inDays.abs(); l++) ...[
+                  Container(
+                    color: Theme.of(context).primaryColor,
+                    width: 1 + (l == 0 ? 2 : 0),
+                    height: 8,
+                  ),
+                  Container(
+                    color: Theme.of(context).primaryColor,
+                    width: 18 - (l == 0 ? 2 : 0),
+                    height: 2,
+                  ),
+                  Container(
+                    color: Theme.of(context).primaryColor,
+                    width: 1,
+                    height: 8,
+                  ),
+                ]
+              ],
             ),
             Container(
               color: Theme.of(context).primaryColor,

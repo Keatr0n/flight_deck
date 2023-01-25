@@ -11,11 +11,22 @@ import 'package:vector_map_tiles/vector_map_tiles.dart';
 import 'package:vector_tile_renderer/vector_tile_renderer.dart' as vtr;
 
 class MapWidget extends StatefulWidget {
-  const MapWidget({super.key, required this.locations, this.highlightedIndex, this.onTap});
+  const MapWidget({
+    super.key,
+    this.locations,
+    this.highlightedIndex,
+    this.onTap,
+    this.height,
+    this.width,
+    this.centre,
+  });
 
-  final List<LatLng> locations;
+  final List<LatLng>? locations;
+  final LatLng? centre;
   final int? highlightedIndex;
-  final void Function(int? index)? onTap;
+  final void Function(int? index, LatLng location)? onTap;
+  final double? height;
+  final double? width;
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
@@ -30,11 +41,15 @@ class _MapWidgetState extends State<MapWidget> {
   List<Marker> _buildMarkers() {
     final output = <Marker>[];
 
-    for (var i = 0; i < widget.locations.length; i++) {
+    if (widget.locations == null) {
+      return output;
+    }
+
+    for (var i = 0; i < widget.locations!.length; i++) {
       output.add(Marker(
         width: i == widget.highlightedIndex ? 110.0 : 80.0,
         height: i == widget.highlightedIndex ? 110.0 : 80.0,
-        point: widget.locations[i],
+        point: widget.locations![i],
         builder: (ctx) => Icon(i == widget.highlightedIndex ? Icons.fullscreen_exit : Icons.fullscreen_sharp, color: Colors.red),
       ));
     }
@@ -44,21 +59,34 @@ class _MapWidgetState extends State<MapWidget> {
 
   @override
   void initState() {
-    initialLocation = [
-      widget.locations.map((e) => [e.latitude, e.longitude]).reduce((value, element) => [value[0] + element[0], value[1] + element[1]]).map((e) => e / widget.locations.length).toList()
-    ].map((e) => LatLng(e[0], e[1])).first;
+    LatLng? initialLocationNullable;
 
-    final averageDistance = MapUtils.getDistance(initialLocation, widget.locations.first);
-
-    if (averageDistance < 1000) {
-      initialZoom = 8;
-    } else if (averageDistance < 10000) {
-      initialZoom = 5;
-    } else if (averageDistance < 1500000) {
-      initialZoom = 3;
-    } else {
-      initialZoom = 1;
+    if (widget.centre != null) {
+      initialLocationNullable = widget.centre!;
     }
+
+    if (widget.locations != null && widget.locations!.isNotEmpty) {
+      initialLocationNullable ??= [
+        widget.locations!.map((e) => [e.latitude, e.longitude]).reduce((value, element) => [value[0] + element[0], value[1] + element[1]]).map((e) => e / widget.locations!.length).toList()
+      ].map((e) => LatLng(e[0], e[1])).first;
+
+      final averageDistance = MapUtils.getDistance(initialLocationNullable, widget.locations!.first);
+
+      if (averageDistance < 1000) {
+        initialZoom = 8;
+      } else if (averageDistance < 10000) {
+        initialZoom = 5;
+      } else if (averageDistance < 1500000) {
+        initialZoom = 3;
+      } else {
+        initialZoom = 1;
+      }
+    } else {
+      initialZoom = 8;
+    }
+    initialLocationNullable ??= LatLng(0, 0);
+
+    initialLocation = initialLocationNullable;
 
     rootBundle.loadString("assets/map_theme.json").then((value) {
       theme = vtr.ThemeReader().read(jsonDecode(value) as Map<String, dynamic>);
@@ -77,16 +105,20 @@ class _MapWidgetState extends State<MapWidget> {
     }
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.4,
-      width: MediaQuery.of(context).size.height * 0.3,
+      height: widget.height ?? MediaQuery.of(context).size.height * 0.4,
+      width: widget.width ?? MediaQuery.of(context).size.width * 0.4,
       child: FlutterMap(
         options: MapOptions(
           center: initialLocation,
           zoom: initialZoom,
           onTap: (tapPosition, point) {
-            final index = widget.locations.indexWhere((el) => MapUtils.getDistance(el, point) < 1000);
+            if (widget.locations == null) {
+              widget.onTap?.call(null, point);
+              return;
+            }
+            final index = widget.locations!.indexWhere((el) => MapUtils.getDistance(el, point) < 1000);
 
-            widget.onTap?.call(index == -1 ? null : index);
+            widget.onTap?.call(index == -1 ? null : index, point);
           },
         ),
         children: [

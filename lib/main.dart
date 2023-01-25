@@ -1,8 +1,12 @@
-import 'package:flight_deck/screens/timeline_screen.dart';
+import 'package:flight_deck/models/flight_deck_db.dart';
+import 'package:flight_deck/screens/home_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlightDeckDB.instance.init();
+
   runApp(const FlightDeckApp());
 }
 
@@ -39,7 +43,7 @@ class FlightDeckApp extends StatelessWidget {
     return MaterialColor(color.value, swatch);
   }
 
-  final defaultTextStyle = const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: Color(0xFFEF2727));
+  final defaultTextStyle = const TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: Color(0xFFEF2727));
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +62,7 @@ class FlightDeckApp extends StatelessWidget {
           bodySmall: defaultTextStyle,
         ),
       ),
-      home: const Scaffold(body: TimelineScreen()),
+      home: const Scaffold(body: HomeScreen()),
     );
   }
 }

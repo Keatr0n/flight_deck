@@ -2,13 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class DeckWindow extends StatefulWidget {
-  const DeckWindow({super.key, this.onClose, this.child, this.onMove, this.title, this.hasWindowBar = true});
+  const DeckWindow({
+    super.key,
+    this.onClose,
+    this.child,
+    this.onMove,
+    this.title,
+    this.hasWindowBar = true,
+    this.backgroundOpacity = 0.496,
+  });
 
   final Widget? child;
   final String? title;
   final void Function()? onClose;
   final void Function(double x, double y)? onMove;
   final bool hasWindowBar;
+  final double backgroundOpacity;
 
   @override
   State<DeckWindow> createState() => _DeckWindowState();
@@ -23,11 +32,15 @@ class _DeckWindowState extends State<DeckWindow> {
       return Container(
         decoration: BoxDecoration(
           border: Border.all(color: const Color(0x7FA60707), width: 2),
-          gradient: const LinearGradient(
-            colors: [Color(0x7F810505), Color(0x7F400202), Color(0x7F400202)],
-            stops: [0.5, 0.501, 1],
-            begin: Alignment(0.5, 0),
-            end: Alignment(0.5, 0.015),
+          gradient: LinearGradient(
+            colors: [
+              const Color(0xFF810505).withOpacity(widget.backgroundOpacity),
+              const Color(0x7F400202).withOpacity(widget.backgroundOpacity),
+              const Color(0x7F400202).withOpacity(widget.backgroundOpacity),
+            ],
+            stops: const [0.5, 0.501, 1],
+            begin: const Alignment(0.5, 0),
+            end: const Alignment(0.5, 0.015),
             tileMode: TileMode.repeated,
           ),
         ),
@@ -102,11 +115,15 @@ class _DeckWindowState extends State<DeckWindow> {
               : Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: const Color(0x7FA60707), width: 2),
-                    gradient: const LinearGradient(
-                      colors: [Color(0x7FA60707), Color(0x7F500404), Color(0x7F500404)],
-                      stops: [0.5, 0.501, 1],
-                      begin: Alignment(0.5, 0),
-                      end: Alignment(0.5, 0.015),
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFF810505).withOpacity(widget.backgroundOpacity),
+                        const Color(0x7F400202).withOpacity(widget.backgroundOpacity),
+                        const Color(0x7F400202).withOpacity(widget.backgroundOpacity),
+                      ],
+                      stops: const [0.5, 0.501, 1],
+                      begin: const Alignment(0.5, 0),
+                      end: const Alignment(0.5, 0.015),
                       tileMode: TileMode.repeated,
                     ),
                   ),
