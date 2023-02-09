@@ -128,6 +128,7 @@ class _StaysScreenState extends State<StaysScreen> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
                           child: MakePlaceWidget(
+                            initialLocation: stays[selectedStay].location,
                             onDone: (newPlace) {
                               FlightDeckDB.instance.updateStay(
                                 selectedStay,

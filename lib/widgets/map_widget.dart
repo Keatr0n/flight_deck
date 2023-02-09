@@ -19,6 +19,7 @@ class MapWidget extends StatefulWidget {
     this.height,
     this.width,
     this.centre,
+    this.initialLocation,
   });
 
   final List<LatLng>? locations;
@@ -27,6 +28,7 @@ class MapWidget extends StatefulWidget {
   final void Function(int? index, LatLng location)? onTap;
   final double? height;
   final double? width;
+  final LatLng? initialLocation;
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
@@ -84,7 +86,7 @@ class _MapWidgetState extends State<MapWidget> {
     } else {
       initialZoom = 8;
     }
-    initialLocationNullable ??= LatLng(0, 0);
+    initialLocationNullable ??= widget.initialLocation ?? LatLng(51.5, -0.09);
 
     initialLocation = initialLocationNullable;
 

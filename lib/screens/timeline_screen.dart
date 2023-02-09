@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flight_deck/models/flight_deck_db.dart';
@@ -43,7 +44,16 @@ class _TimelineScreenState extends State<TimelineScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            StayWidget(stay: stays[i], isMini: true),
+            GestureDetector(
+              onTap: () => showDialog(
+                context: context,
+                builder: (context) => Material(
+                  color: Colors.black38,
+                  child: Padding(padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20), child: StayWidget(stay: stays[i], onClose: () => Navigator.of(context).pop())),
+                ),
+              ),
+              child: StayWidget(stay: stays[i], isMini: true),
+            ),
             Center(
               child: Container(
                 transformAlignment: Alignment.center,
@@ -115,6 +125,24 @@ class _TimelineScreenState extends State<TimelineScreen> {
     }
 
     return timeline;
+  }
+
+  late final StreamSubscription updateDbStream;
+
+  @override
+  void dispose() {
+    updateDbStream.cancel();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    updateDbStream = FlightDeckDB.instance.updateDbStream.listen((event) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    super.initState();
   }
 
   @override

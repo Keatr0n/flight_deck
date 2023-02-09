@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 class MakePlaceWidget extends StatefulWidget {
-  const MakePlaceWidget({super.key, this.onDone});
+  const MakePlaceWidget({super.key, this.onDone, this.initialLocation});
   final void Function(Place newPlace)? onDone;
+  final LatLng? initialLocation;
 
   @override
   State<MakePlaceWidget> createState() => _MakePlaceWidgetState();
@@ -30,6 +31,10 @@ class _MakePlaceWidgetState extends State<MakePlaceWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (location.latitude == 0 && location.longitude == 0) {
+      location = widget.initialLocation ?? LatLng(0, 0);
+    }
+
     return DeckWindow(
       onClose: Navigator.of(context).pop,
       child: SizedBox(
@@ -77,6 +82,7 @@ class _MakePlaceWidgetState extends State<MakePlaceWidget> {
                 const SizedBox(height: 10),
                 MapWidget(
                   width: MediaQuery.of(context).size.width,
+                  initialLocation: widget.initialLocation,
                   locations: [location],
                   onTap: (_, location) {
                     this.location = location;

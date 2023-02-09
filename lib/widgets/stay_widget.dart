@@ -15,11 +15,13 @@ class StayWidget extends StatefulWidget {
     this.onNewPlace,
     this.onDeletePlace,
     this.onDelete,
+    this.onClose,
   });
 
   final Stay stay;
   final bool isMini;
   final bool usesDeckWindow;
+  final void Function()? onClose;
   final void Function()? onEdit;
   final void Function()? onNewPlace;
   final void Function(Place)? onDeletePlace;
@@ -67,6 +69,7 @@ class _StayWidgetState extends State<StayWidget> {
   Widget deckWindowWrapper(Widget child) {
     if (widget.usesDeckWindow) {
       return DeckWindow(
+        onClose: widget.onClose,
         hasWindowBar: !widget.isMini,
         title: widget.stay.name,
         child: child,
@@ -126,9 +129,14 @@ class _StayWidgetState extends State<StayWidget> {
                       children: [
                         DeckButton(
                           onTap: () {
+                            if (widget.stay.places.isEmpty) return;
+
                             if ((highlightIndex ?? 0) >= widget.stay.places.length - 1) {
-                              highlightIndex = (highlightIndex ?? 1) - 1;
-                              widget.onDeletePlace?.call(widget.stay.places[(highlightIndex ?? 0) + 1]);
+                              highlightIndex = widget.stay.places.length - 1;
+
+                              widget.onDeletePlace?.call(widget.stay.places[highlightIndex!]);
+
+                              highlightIndex = widget.stay.places.length - 1;
                             } else {
                               widget.onDeletePlace?.call(widget.stay.places[highlightIndex ?? 0]);
                             }
@@ -167,6 +175,7 @@ class _StayWidgetState extends State<StayWidget> {
                           locations: widget.stay.places.map((e) => e.location).toList(),
                           highlightedIndex: highlightIndex,
                           centre: widget.stay.location,
+                          key: Key(widget.stay.location.toString()),
                           width: MediaQuery.of(context).size.width - 141,
                           onTap: (index, location) {
                             if (index != null && index != highlightIndex && mounted) {

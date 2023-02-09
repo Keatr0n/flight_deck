@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flight_deck/models/job_scheduler.dart';
 import 'package:flight_deck/models/stay.dart';
 import 'package:flight_deck/utils/file_utils.dart';
 
@@ -19,7 +20,7 @@ class FlightDeckDB {
   List<Stay> _stays = [];
   List<Stay> get stays => _stays;
 
-  Completer<void> _saveCompleter = Completer<void>()..complete();
+  final JobScheduler _jobScheduler = JobScheduler();
 
   Future<void> init() async {
     if (_initialized) return;
@@ -44,9 +45,6 @@ class FlightDeckDB {
 
   Future<void> save() async {
     _updateDbStreamController.add(null);
-    if (!_saveCompleter.isCompleted) await _saveCompleter.future;
-
-    _saveCompleter = Completer<void>();
 
     final jsonString = jsonEncode({
       'stays': _stays.map((e) => e.toJson()).toList(),
@@ -54,25 +52,24 @@ class FlightDeckDB {
 
     await FileUtils.writeLocalFile(fileName, jsonString);
 
-    _saveCompleter.complete();
     return;
   }
 
   void addStay(Stay stay) {
     _stays.add(stay);
     _stays.sort((a, b) => a.start.compareTo(b.start));
-    save();
+    _jobScheduler.addJob(save);
   }
 
   void deleteStay(Stay stay) {
     _stays.remove(stay);
     _stays.sort((a, b) => a.start.compareTo(b.start));
-    save();
+    _jobScheduler.addJob(save);
   }
 
   void updateStay(int index, Stay stay) {
     _stays[index] = stay;
     _stays.sort((a, b) => a.start.compareTo(b.start));
-    save();
+    _jobScheduler.addJob(save);
   }
 }
