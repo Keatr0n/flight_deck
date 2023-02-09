@@ -1,5 +1,4 @@
 import 'package:flight_deck/models/flight_deck_db.dart';
-import 'package:flight_deck/models/place.dart';
 import 'package:flight_deck/models/stay.dart';
 import 'package:flight_deck/widgets/deck_window.dart';
 import 'package:flight_deck/widgets/map_widget.dart';

@@ -1,3 +1,4 @@
+import 'package:flight_deck/screens/map_screen.dart';
 import 'package:flight_deck/screens/stays_screen.dart';
 import 'package:flight_deck/screens/timeline_screen.dart';
 import 'package:flight_deck/widgets/make_stay_widget.dart';
@@ -17,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> screen = [
     const StaysScreen(),
     const TimelineScreen(),
-    const Center(child: Text("ERROR 404: map not found")),
+    const MapScreen(),
     const Center(child: Text("ERROR 404: add stay not found")),
   ];
 

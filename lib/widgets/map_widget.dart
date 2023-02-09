@@ -118,7 +118,7 @@ class _MapWidgetState extends State<MapWidget> {
               widget.onTap?.call(null, point);
               return;
             }
-            final index = widget.locations!.indexWhere((el) => MapUtils.getDistance(el, point) < 1000);
+            final index = widget.locations!.indexWhere((el) => MapUtils.getDistance(el, point) < 5000);
 
             widget.onTap?.call(index == -1 ? null : index, point);
           },

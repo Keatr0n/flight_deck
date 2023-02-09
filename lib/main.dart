@@ -53,7 +53,7 @@ class FlightDeckApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: createMaterialColor(const Color(0xFFDF2727)),
         primaryColor: const Color(0xFFDF2727),
-        backgroundColor: const Color(0xFF171717),
+        colorScheme: const ColorScheme.dark(background: Color(0xFF171717)),
         scaffoldBackgroundColor: const Color(0xFF171717),
         fontFamily: "FiraCode",
         textTheme: TextTheme(
