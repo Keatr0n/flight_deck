@@ -90,7 +90,7 @@ class _StayWidgetState extends State<StayWidget> {
               Text("${widget.stay.start.day}/${widget.stay.start.month}/${widget.stay.start.year} -> ${widget.stay.end.day}/${widget.stay.end.month}/${widget.stay.end.year}"),
               Text("${widget.stay.stayLength} ${widget.stay.stayLength == 1 ? "day" : "days"}"),
               const SizedBox(height: 10),
-              Text("${widget.stay.location.latitude}, ${widget.stay.location.longitude}"),
+              Text("${widget.stay.location.latitude.toStringAsFixed(3)}, ${widget.stay.location.longitude.toStringAsFixed(3)}"),
             ],
           ),
         ),

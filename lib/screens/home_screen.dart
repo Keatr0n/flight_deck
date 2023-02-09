@@ -1,4 +1,5 @@
 import 'package:flight_deck/screens/stays_screen.dart';
+import 'package:flight_deck/screens/timeline_screen.dart';
 import 'package:flight_deck/widgets/make_stay_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -12,9 +13,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int selectedScreen = 0;
 
-  List<String> screenNames = ["TIMELINE", "MAP", "ADD STAY"];
+  List<String> screenNames = ["STAYS", "TIMELINE", "MAP", "ADD STAY"];
   List<Widget> screen = [
     const StaysScreen(),
+    const TimelineScreen(),
     const Center(child: Text("ERROR 404: map not found")),
     const Center(child: Text("ERROR 404: add stay not found")),
   ];
@@ -25,11 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
       body: screen[selectedScreen],
       bottomNavigationBar: Row(
         children: [
-          for (var i = 0; i < 3; i++)
+          for (var i = 0; i < screenNames.length; i++)
             Expanded(
               child: GestureDetector(
                 onTap: () {
-                  if (i == 2) {
+                  if (i == screenNames.length - 1) {
                     showDialog(
                       context: context,
                       builder: (context) => const Material(

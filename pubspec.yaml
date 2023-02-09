@@ -38,11 +38,12 @@ dependencies:
   vector_map_tiles: ^3.1.4
 
   # widgets and things
-  flutter_svg: ^1.1.6
+  # flutter_svg: ^2.0.0+1
 
   # misc
   path_provider: ^2.0.11
   intl: ^0.18.0
+  flutter_launcher_icons: ^0.11.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -59,6 +60,13 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+
+flutter_icons:
+  android: true
+  ios: false
+  image_path: "assets/launcher_icons/icon.png"
+  adaptive_icon_foreground: "assets/launcher_icons/icon.png"
+  adaptive_icon_background: "#020202" # only available for Android 8.0 devices and above
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
