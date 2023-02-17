@@ -91,7 +91,7 @@ class _StayWidgetState extends State<StayWidget> {
               Text(widget.stay.name ?? ""),
               const SizedBox(height: 10),
               Text("${widget.stay.start.day}/${widget.stay.start.month}/${widget.stay.start.year} -> ${widget.stay.end.day}/${widget.stay.end.month}/${widget.stay.end.year}"),
-              Text("${widget.stay.stayLength} ${widget.stay.stayLength == 1 ? "day" : "days"}"),
+              Text("${widget.stay.stayLength} ${widget.stay.stayLength == 1 ? "night" : "nights"}"),
               const SizedBox(height: 10),
               Text("${widget.stay.location.latitude.toStringAsFixed(3)}, ${widget.stay.location.longitude.toStringAsFixed(3)}"),
             ],
@@ -108,7 +108,7 @@ class _StayWidgetState extends State<StayWidget> {
           children: [
             Text(widget.usesDeckWindow ? "" : widget.stay.name ?? ""),
             const SizedBox(height: 10),
-            Text("${widget.stay.start.day}/${widget.stay.start.month}/${widget.stay.start.year} -> ${widget.stay.end.day}/${widget.stay.end.month}/${widget.stay.end.year} (${widget.stay.stayLength} ${widget.stay.stayLength == 1 ? "day" : "days"})"),
+            Text("${widget.stay.start.day}/${widget.stay.start.month}/${widget.stay.start.year} -> ${widget.stay.end.day}/${widget.stay.end.month}/${widget.stay.end.year} (${widget.stay.stayLength} ${widget.stay.stayLength == 1 ? "night" : "nights"})"),
             const SizedBox(height: 10),
             Text(widget.stay.notes ?? ""),
             // const SizedBox(height: 10),

@@ -97,7 +97,7 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                       items: List.generate(getDaysInMonth(start), (index) => DropdownMenuItem<int>(value: index + 1, child: Text((index + 1).toString()))),
                       onChanged: (value) => setState(() {
                         start = DateTime(start.year, start.month, value!);
-                        durationController.text = (end.difference(start).inDays + 1).toString();
+                        durationController.text = (end.difference(start).inDays).toString();
                       }),
                       style: const TextStyle(color: Color(0xFFE90808)),
                       value: start.day,
@@ -108,12 +108,12 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                         if (getDaysInMonth(DateTime(start.year, value!, 1)) < start.day) {
                           setState(() {
                             start = DateTime(start.year, value, getDaysInMonth(DateTime(start.year, value, 1)));
-                            durationController.text = (end.difference(start).inDays + 1).toString();
+                            durationController.text = (end.difference(start).inDays).toString();
                           });
                         } else {
                           setState(() {
                             start = DateTime(start.year, value, start.day);
-                            durationController.text = (end.difference(start).inDays + 1).toString();
+                            durationController.text = (end.difference(start).inDays).toString();
                           });
                         }
                       },
@@ -124,7 +124,7 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                       items: List.generate(10, (index) => DropdownMenuItem<int>(value: index + DateTime.now().year, child: Text((index + DateTime.now().year).toString()))),
                       onChanged: (value) => setState(() {
                         start = DateTime(value!, start.month, start.day);
-                        durationController.text = (end.difference(start).inDays + 1).toString();
+                        durationController.text = (end.difference(start).inDays).toString();
                       }),
                       style: const TextStyle(color: Color(0xFFE90808)),
                       value: start.year,
@@ -140,7 +140,7 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                       items: List.generate(getDaysInMonth(end), (index) => DropdownMenuItem<int>(value: index + 1, child: Text((index + 1).toString()))),
                       onChanged: (value) => setState(() {
                         end = DateTime(end.year, end.month, value!);
-                        durationController.text = (end.difference(start).inDays + 1).toString();
+                        durationController.text = (end.difference(start).inDays).toString();
                       }),
                       style: const TextStyle(color: Color(0xFFE90808)),
                       value: end.day,
@@ -151,12 +151,12 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                         if (getDaysInMonth(DateTime(end.year, value!, 1)) < end.day) {
                           setState(() {
                             end = DateTime(end.year, value, getDaysInMonth(DateTime(end.year, value, 1)));
-                            durationController.text = (end.difference(start).inDays + 1).toString();
+                            durationController.text = (end.difference(start).inDays).toString();
                           });
                         } else {
                           setState(() {
                             end = DateTime(end.year, value, end.day);
-                            durationController.text = (end.difference(start).inDays + 1).toString();
+                            durationController.text = (end.difference(start).inDays).toString();
                           });
                         }
                       },
@@ -167,7 +167,7 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                       items: List.generate(10, (index) => DropdownMenuItem<int>(value: index + DateTime.now().year, child: Text((index + DateTime.now().year).toString()))),
                       onChanged: (value) => setState(() {
                         end = DateTime(value!, end.month, end.day);
-                        durationController.text = (end.difference(start).inDays + 1).toString();
+                        durationController.text = (end.difference(start).inDays).toString();
                       }),
                       style: const TextStyle(color: Color(0xFFE90808)),
                       value: end.year,
@@ -184,7 +184,7 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                     keyboardType: TextInputType.number,
                     style: const TextStyle(color: Color(0xFFE90808)),
                     decoration: const InputDecoration(
-                      label: Text("STAY DURATION (DAYS)"),
+                      label: Text("STAY DURATION (NIGHTS)"),
                       labelStyle: TextStyle(color: Color(0xFFE90808)),
                       fillColor: Colors.black26,
                       filled: true,

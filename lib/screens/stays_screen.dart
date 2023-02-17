@@ -74,7 +74,7 @@ class _StaysScreenState extends State<StaysScreen> {
                             children: [
                               Text(stays[i].name ?? "", style: TextStyle(fontWeight: selectedStay == i ? FontWeight.bold : FontWeight.normal)),
                               Text(
-                                "${DateFormat.MMMd().format(stays[i].start).toString()} (${stays[i].stayLength} days)",
+                                "${DateFormat.MMMd().format(stays[i].start).toString()} (${stays[i].stayLength} ${stays[i].stayLength == 1 ? "night" : "nights"})",
                                 style: TextStyle(fontWeight: selectedStay == i ? FontWeight.bold : FontWeight.normal),
                               ),
                             ],
