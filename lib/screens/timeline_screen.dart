@@ -39,10 +39,10 @@ class _TimelineScreenState extends State<TimelineScreen> {
     for (var i = 0; i < yLevels.length; i++) {
       if (i == 0) continue;
 
-      if (stays[i].start.isBefore(stays[i - 1].start.add(Duration(days: stays[i - 1].stayLength > 16 ? stays[i - 1].stayLength : 16)))) {
+      if (stays[i].start.isBefore(stays[i - 1].start.add(Duration(days: stays[i - 1].stayLength > 14 ? stays[i - 1].stayLength : 14)))) {
         final firstStayInChain = stays[(i - (yLevels[i - 1] + 1))];
 
-        if (stays[i].start.isBefore(firstStayInChain.start.add(Duration(days: firstStayInChain.stayLength > 16 ? firstStayInChain.stayLength : 16)))) {
+        if (stays[i].start.isBefore(firstStayInChain.start.add(Duration(days: firstStayInChain.stayLength > 14 ? firstStayInChain.stayLength : 14)))) {
           yLevels[i] = yLevels[i - 1] + 1;
         }
       }

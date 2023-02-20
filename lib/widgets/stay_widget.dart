@@ -83,12 +83,14 @@ class _StayWidgetState extends State<StayWidget> {
   Widget build(BuildContext context) {
     if (widget.isMini) {
       return deckWindowWrapper(
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+        Container(
+          width: 230,
+          height: 100,
+          margin: const EdgeInsets.symmetric(horizontal: 8),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(widget.stay.name ?? ""),
+              Text(widget.stay.name ?? "", overflow: TextOverflow.ellipsis),
               const SizedBox(height: 10),
               Text("${widget.stay.start.day}/${widget.stay.start.month}/${widget.stay.start.year} -> ${widget.stay.end.day}/${widget.stay.end.month}/${widget.stay.end.year}"),
               Text("${widget.stay.stayLength} ${widget.stay.stayLength == 1 ? "night" : "nights"}"),
@@ -101,115 +103,122 @@ class _StayWidgetState extends State<StayWidget> {
     }
 
     return deckWindowWrapper(
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(widget.usesDeckWindow ? "" : widget.stay.name ?? ""),
-            const SizedBox(height: 10),
-            Text("${widget.stay.start.day}/${widget.stay.start.month}/${widget.stay.start.year} -> ${widget.stay.end.day}/${widget.stay.end.month}/${widget.stay.end.year} (${widget.stay.stayLength} ${widget.stay.stayLength == 1 ? "night" : "nights"})"),
-            const SizedBox(height: 10),
-            Text(widget.stay.notes ?? ""),
-            // const SizedBox(height: 10),
-            // Text("${stay.location.latitude}, ${stay.location.longitude}"),
-            const SizedBox(height: 15),
-            const Text("Points of Interest"),
-            const SizedBox(height: 6),
-            Container(
-              height: (MediaQuery.of(context).size.height * 0.4) + 85,
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFFA60707), width: 2),
-              ),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 80,
-                    child: Row(
-                      children: [
-                        DeckButton(
-                          onTap: () {
-                            if (widget.stay.places.isEmpty) return;
+      SizedBox(
+        height: MediaQuery.of(context).size.height * 0.8,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(widget.usesDeckWindow ? "" : widget.stay.name ?? ""),
+                const SizedBox(height: 10),
+                Text(
+                  "${widget.stay.start.day}/${widget.stay.start.month}/${widget.stay.start.year} -> ${widget.stay.end.day}/${widget.stay.end.month}/${widget.stay.end.year} (${widget.stay.stayLength} ${widget.stay.stayLength == 1 ? "night" : "nights"})",
+                ),
+                const SizedBox(height: 10),
+                Text(widget.stay.notes ?? ""),
+                // const SizedBox(height: 10),
+                // Text("${stay.location.latitude}, ${stay.location.longitude}"),
+                const SizedBox(height: 15),
+                const Text("Points of Interest"),
+                const SizedBox(height: 6),
+                Container(
+                  height: (MediaQuery.of(context).size.height * 0.4) + 85,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0xFFA60707), width: 2),
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 80,
+                        child: Row(
+                          children: [
+                            DeckButton(
+                              onTap: () {
+                                if (widget.stay.places.isEmpty) return;
 
-                            if ((highlightIndex ?? 0) >= widget.stay.places.length - 1) {
-                              highlightIndex = widget.stay.places.length - 1;
+                                if ((highlightIndex ?? 0) >= widget.stay.places.length - 1) {
+                                  highlightIndex = widget.stay.places.length - 1;
 
-                              widget.onDeletePlace?.call(widget.stay.places[highlightIndex!]);
+                                  widget.onDeletePlace?.call(widget.stay.places[highlightIndex!]);
 
-                              highlightIndex = widget.stay.places.length - 1;
-                            } else {
-                              widget.onDeletePlace?.call(widget.stay.places[highlightIndex ?? 0]);
-                            }
+                                  highlightIndex = widget.stay.places.length - 1;
+                                } else {
+                                  widget.onDeletePlace?.call(widget.stay.places[highlightIndex ?? 0]);
+                                }
 
-                            if ((highlightIndex ?? 0) < 0) highlightIndex = 0;
-                          },
-                          height: 80,
-                          width: 50,
-                          child: const Icon(Icons.delete_sharp, color: Color(0xFFA60707)),
+                                if ((highlightIndex ?? 0) < 0) highlightIndex = 0;
+                              },
+                              height: 80,
+                              width: 50,
+                              child: const Icon(Icons.delete_sharp, color: Color(0xFFA60707)),
+                            ),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: widget.stay.places.isNotEmpty
+                                      ? [
+                                          Text(widget.stay.places[highlightIndex ?? 0].address ?? ""),
+                                          const SizedBox(height: 4),
+                                          Text(widget.stay.places[highlightIndex ?? 0].notes ?? ""),
+                                        ]
+                                      : [],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: widget.stay.places.isNotEmpty
-                                  ? [
-                                      Text(widget.stay.places[highlightIndex ?? 0].address ?? ""),
-                                      const SizedBox(height: 4),
-                                      Text(widget.stay.places[highlightIndex ?? 0].notes ?? ""),
-                                    ]
-                                  : [],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SingleChildScrollView(child: Column(children: placeTabs())),
+                          Container(
+                            decoration: const BoxDecoration(
+                              border: Border(left: BorderSide(color: Color(0xFFA60707), width: 1), top: BorderSide(color: Color(0xFFA60707), width: 1)),
+                            ),
+                            child: MapWidget(
+                              locations: widget.stay.places.map((e) => e.location).toList(),
+                              highlightedIndex: highlightIndex,
+                              centre: widget.stay.location,
+                              key: Key(widget.stay.location.toString()),
+                              width: MediaQuery.of(context).size.width - 141,
+                              onTap: (index, location) {
+                                if (index != null && index != highlightIndex && mounted) {
+                                  setState(() {
+                                    highlightIndex = index;
+                                  });
+                                }
+                              },
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SingleChildScrollView(child: Column(children: placeTabs())),
-                      Container(
-                        decoration: const BoxDecoration(
-                          border: Border(left: BorderSide(color: Color(0xFFA60707), width: 1), top: BorderSide(color: Color(0xFFA60707), width: 1)),
-                        ),
-                        child: MapWidget(
-                          locations: widget.stay.places.map((e) => e.location).toList(),
-                          highlightedIndex: highlightIndex,
-                          centre: widget.stay.location,
-                          key: Key(widget.stay.location.toString()),
-                          width: MediaQuery.of(context).size.width - 141,
-                          onTap: (index, location) {
-                            if (index != null && index != highlightIndex && mounted) {
-                              setState(() {
-                                highlightIndex = index;
-                              });
-                            }
-                          },
-                        ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                DeckButton(
-                  onTap: () {
-                    widget.onDelete?.call();
-                  },
-                  child: const Text("DELETE STAY"),
                 ),
-                DeckButton(
-                  onTap: () {
-                    widget.onEdit?.call();
-                  },
-                  child: const Text("EDIT STAY"),
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    DeckButton(
+                      onTap: () {
+                        widget.onDelete?.call();
+                      },
+                      child: const Text("DELETE STAY"),
+                    ),
+                    DeckButton(
+                      onTap: () {
+                        widget.onEdit?.call();
+                      },
+                      child: const Text("EDIT STAY"),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
