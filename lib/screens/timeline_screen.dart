@@ -187,6 +187,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
+      controller: ScrollController(initialScrollOffset: stays[FlightDeckDB.instance.getFirstStayIndexEndingAfterNow()].start.difference(DateTime(stays.first.start.year, stays.first.start.month)).inDays * 20),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 30),
         child: Column(

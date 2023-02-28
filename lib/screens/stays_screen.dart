@@ -19,7 +19,7 @@ class StaysScreen extends StatefulWidget {
 class _StaysScreenState extends State<StaysScreen> {
   List<Stay> get stays => FlightDeckDB.instance.stays;
 
-  int selectedStay = 0;
+  int selectedStay = FlightDeckDB.instance.getFirstStayIndexEndingAfterNow();
 
   late final StreamSubscription updateDbStream;
 
@@ -52,6 +52,7 @@ class _StaysScreenState extends State<StaysScreen> {
           child: Column(
             children: [
               SingleChildScrollView(
+                controller: ScrollController(initialScrollOffset: (selectedStay * 250).toDouble()),
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -63,6 +64,7 @@ class _StaysScreenState extends State<StaysScreen> {
                           setState(() {});
                         },
                         child: Container(
+                          width: 250,
                           padding: const EdgeInsets.symmetric(horizontal: 5),
                           decoration: BoxDecoration(
                             border: Border.symmetric(

@@ -43,6 +43,16 @@ class FlightDeckDB {
     return;
   }
 
+  int getFirstStayIndexEndingAfterNow() {
+    final now = DateTime.now();
+    for (var i = 0; i < _stays.length; i++) {
+      if (stays[i].end.isAfter(now)) {
+        return i;
+      }
+    }
+    return 0;
+  }
+
   Future<void> save() async {
     _updateDbStreamController.add(null);
 
