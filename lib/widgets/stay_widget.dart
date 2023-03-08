@@ -178,6 +178,9 @@ class _StayWidgetState extends State<StayWidget> {
                             decoration: const BoxDecoration(
                               border: Border(left: BorderSide(color: Color(0xFFA60707), width: 1), top: BorderSide(color: Color(0xFFA60707), width: 1)),
                             ),
+
+                            
+                            
                             child: MapWidget(
                               locations: widget.stay.places.map((e) => e.location).toList(),
                               highlightedIndex: highlightIndex,

@@ -43,7 +43,7 @@ class FlightDeckApp extends StatelessWidget {
     return MaterialColor(color.value, swatch);
   }
 
-  final defaultTextStyle = const TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: Color(0xFFEF2727));
+  final defaultTextStyle = const TextStyle(fontWeight: FontWeight.w400, fontSize: 14, color: Color(0xFFEF2727));
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +53,10 @@ class FlightDeckApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: createMaterialColor(const Color(0xFFDF2727)),
         primaryColor: const Color(0xFFDF2727),
-        colorScheme: const ColorScheme.dark(background: Color(0xFF171717)),
+        colorScheme: const ColorScheme.dark(background: Color(0xFF171717), primary: Color(0xFFDF2727)),
         scaffoldBackgroundColor: const Color(0xFF171717),
         fontFamily: "FiraCode",
+        useMaterial3: true,
         textTheme: TextTheme(
           bodyLarge: defaultTextStyle,
           bodyMedium: defaultTextStyle,

@@ -40,6 +40,8 @@ class _MapWidgetState extends State<MapWidget> {
   late final LatLng initialLocation;
   late final double initialZoom;
 
+  final MapController mapController = MapController();
+
   List<Marker> _buildMarkers() {
     final output = <Marker>[];
 
@@ -52,7 +54,15 @@ class _MapWidgetState extends State<MapWidget> {
         width: i == widget.highlightedIndex ? 110.0 : 80.0,
         height: i == widget.highlightedIndex ? 110.0 : 80.0,
         point: widget.locations![i],
-        builder: (ctx) => Icon(i == widget.highlightedIndex ? Icons.fullscreen_exit : Icons.fullscreen_sharp, color: Colors.red),
+        builder: (ctx) => TextButton(
+          onPressed: () {
+            widget.onTap?.call(i, widget.locations![i]);
+          },
+          child: Icon(
+            i == widget.highlightedIndex ? Icons.fullscreen_exit : Icons.fullscreen_sharp,
+            color: Colors.red,
+          ),
+        ),
       ));
     }
 
@@ -110,7 +120,9 @@ class _MapWidgetState extends State<MapWidget> {
       height: widget.height ?? MediaQuery.of(context).size.height * 0.4,
       width: widget.width ?? MediaQuery.of(context).size.width * 0.4,
       child: FlutterMap(
+        mapController: mapController,
         options: MapOptions(
+          interactiveFlags: 31, // everything but rotate
           center: initialLocation,
           zoom: initialZoom,
           onTap: (tapPosition, point) {
@@ -118,9 +130,6 @@ class _MapWidgetState extends State<MapWidget> {
               widget.onTap?.call(null, point);
               return;
             }
-            final index = widget.locations!.indexWhere((el) => MapUtils.getDistance(el, point) < 5000);
-
-            widget.onTap?.call(index == -1 ? null : index, point);
           },
         ),
         children: [
