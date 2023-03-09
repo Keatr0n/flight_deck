@@ -126,10 +126,7 @@ class _MapWidgetState extends State<MapWidget> {
           center: initialLocation,
           zoom: initialZoom,
           onTap: (tapPosition, point) {
-            if (widget.locations == null) {
-              widget.onTap?.call(null, point);
-              return;
-            }
+            widget.onTap?.call(null, point);
           },
         ),
         children: [
