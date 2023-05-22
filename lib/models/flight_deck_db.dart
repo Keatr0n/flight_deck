@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flight_deck/models/job_scheduler.dart';
 import 'package:flight_deck/models/stay.dart';
+import 'package:flight_deck/models/user_settings.dart';
 import 'package:flight_deck/utils/file_utils.dart';
 
 class FlightDeckDB {
@@ -19,6 +20,9 @@ class FlightDeckDB {
 
   List<Stay> _stays = [];
   List<Stay> get stays => _stays;
+
+  UserSettings _userSettings = UserSettings.empty();
+  UserSettings get userSettings => _userSettings;
 
   final JobScheduler _jobScheduler = JobScheduler();
 
@@ -38,6 +42,7 @@ class FlightDeckDB {
 
     final jsonData = jsonDecode(jsonString);
     _stays = (jsonData['stays'] as List).map<Stay>((e) => Stay.fromJson(e)).toList();
+    _userSettings = UserSettings.fromJson(jsonData['userSettings'] ?? {});
     _initialized = true;
 
     return;
@@ -53,11 +58,19 @@ class FlightDeckDB {
     return 0;
   }
 
+  /// DON'T DO THIS EVER!!!
+  void wipeDB() {
+    _stays = [];
+    _userSettings = UserSettings.empty();
+    _jobScheduler.addJob(save);
+  }
+
   Future<void> save() async {
     _updateDbStreamController.add(null);
 
     final jsonString = jsonEncode({
       'stays': _stays.map((e) => e.toJson()).toList(),
+      'userSettings': _userSettings.toJson(),
     });
 
     await FileUtils.writeLocalFile(fileName, jsonString);

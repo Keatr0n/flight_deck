@@ -28,7 +28,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
       currentMonth = nextMonth;
     }
 
-    return width;
+    return width + 80; // need a lil extra space so things don't get cut off
   }
 
   List<Widget> buildStays() {

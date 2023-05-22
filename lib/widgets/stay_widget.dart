@@ -4,6 +4,7 @@ import 'package:flight_deck/widgets/deck_button.dart';
 import 'package:flight_deck/widgets/deck_window.dart';
 import 'package:flight_deck/widgets/map_widget.dart';
 import 'package:flutter/material.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
 class StayWidget extends StatefulWidget {
   const StayWidget({
@@ -178,9 +179,6 @@ class _StayWidgetState extends State<StayWidget> {
                             decoration: const BoxDecoration(
                               border: Border(left: BorderSide(color: Color(0xFFA60707), width: 1), top: BorderSide(color: Color(0xFFA60707), width: 1)),
                             ),
-
-                            
-                            
                             child: MapWidget(
                               locations: widget.stay.places.map((e) => e.location).toList(),
                               highlightedIndex: highlightIndex,
