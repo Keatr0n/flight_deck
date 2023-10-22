@@ -7,12 +7,15 @@ import 'package:vector_map_tiles/vector_map_tiles.dart';
 /// asset path should look something like this
 /// assets/map_tiles/{z}/{x}/{y}.pbf
 class AssetVectorTileProvider extends VectorTileProvider {
-  AssetVectorTileProvider(this._assetPath, this._maximumZoom);
+  AssetVectorTileProvider(this._assetPath, this._maximumZoom, this._minimumZoom);
   final int _maximumZoom;
+  final int _minimumZoom;
   final String _assetPath;
 
   @override
   int get maximumZoom => _maximumZoom;
+  @override
+  int get minimumZoom => _minimumZoom;
 
   @override
   Future<Uint8List> provide(TileIdentity tile) {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flight_deck/models/asset_vector_tile_provider.dart';
+import 'package:flight_deck/models/map_location.dart';
 import 'package:flight_deck/utils/map_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,7 +23,7 @@ class MapWidget extends StatefulWidget {
     this.initialLocation,
   });
 
-  final List<LatLng>? locations;
+  final List<MapLocation>? locations;
   final LatLng? centre;
   final int? highlightedIndex;
   final void Function(int? index, LatLng location)? onTap;
@@ -53,13 +54,13 @@ class _MapWidgetState extends State<MapWidget> {
       output.add(Marker(
         width: i == widget.highlightedIndex ? 110.0 : 80.0,
         height: i == widget.highlightedIndex ? 110.0 : 80.0,
-        point: widget.locations![i],
+        point: widget.locations![i].location,
         builder: (ctx) => TextButton(
           onPressed: () {
-            widget.onTap?.call(i, widget.locations![i]);
+            widget.onTap?.call(i, widget.locations![i].location);
           },
           child: Icon(
-            i == widget.highlightedIndex ? Icons.fullscreen_exit : Icons.fullscreen_sharp,
+            widget.locations![i].icon ?? (i == widget.highlightedIndex ? Icons.fullscreen_exit : Icons.fullscreen_sharp),
             color: Colors.red,
           ),
         ),
@@ -79,10 +80,14 @@ class _MapWidgetState extends State<MapWidget> {
 
     if (widget.locations != null && widget.locations!.isNotEmpty) {
       initialLocationNullable ??= [
-        widget.locations!.map((e) => [e.latitude, e.longitude]).reduce((value, element) => [value[0] + element[0], value[1] + element[1]]).map((e) => e / widget.locations!.length).toList()
+        widget.locations!
+            .map((e) => [e.location.latitude, e.location.longitude])
+            .reduce((value, element) => [value[0] + element[0], value[1] + element[1]])
+            .map((e) => e / widget.locations!.length)
+            .toList()
       ].map((e) => LatLng(e[0], e[1])).first;
 
-      final averageDistance = MapUtils.getDistance(initialLocationNullable, widget.locations!.first);
+      final averageDistance = MapUtils.getDistance(initialLocationNullable, widget.locations!.first.location);
 
       if (averageDistance < 1000) {
         initialZoom = 8;
@@ -96,7 +101,7 @@ class _MapWidgetState extends State<MapWidget> {
     } else {
       initialZoom = 8;
     }
-    initialLocationNullable ??= widget.initialLocation ?? LatLng(51.5, -0.09);
+    initialLocationNullable ??= widget.initialLocation ?? const LatLng(51.5, -0.09);
 
     initialLocation = initialLocationNullable;
 
@@ -132,7 +137,7 @@ class _MapWidgetState extends State<MapWidget> {
         children: [
           VectorTileLayer(
             theme: theme,
-            tileProviders: TileProviders({"openmaptiles": AssetVectorTileProvider("assets/map_tiles/{z}/{x}/{y}.pbf", 5)}),
+            tileProviders: TileProviders({"openmaptiles": AssetVectorTileProvider("assets/map_tiles/{z}/{x}/{y}.pbf", 5, 0)}),
           ),
           MarkerLayer(markers: _buildMarkers()),
         ],

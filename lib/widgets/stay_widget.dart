@@ -1,3 +1,4 @@
+import 'package:flight_deck/models/map_location.dart';
 import 'package:flight_deck/models/place.dart';
 import 'package:flight_deck/models/stay.dart';
 import 'package:flight_deck/widgets/deck_button.dart';
@@ -93,7 +94,8 @@ class _StayWidgetState extends State<StayWidget> {
             children: [
               Text(widget.stay.name ?? "", overflow: TextOverflow.ellipsis),
               const SizedBox(height: 10),
-              Text("${widget.stay.start.day}/${widget.stay.start.month}/${widget.stay.start.year} -> ${widget.stay.end.day}/${widget.stay.end.month}/${widget.stay.end.year}"),
+              Text(
+                  "${widget.stay.start.day}/${widget.stay.start.month}/${widget.stay.start.year} -> ${widget.stay.end.day}/${widget.stay.end.month}/${widget.stay.end.year}"),
               Text("${widget.stay.stayLength} ${widget.stay.stayLength == 1 ? "night" : "nights"}"),
               const SizedBox(height: 10),
               Text("${widget.stay.location.latitude.toStringAsFixed(3)}, ${widget.stay.location.longitude.toStringAsFixed(3)}"),
@@ -180,7 +182,7 @@ class _StayWidgetState extends State<StayWidget> {
                               border: Border(left: BorderSide(color: Color(0xFFA60707), width: 1), top: BorderSide(color: Color(0xFFA60707), width: 1)),
                             ),
                             child: MapWidget(
-                              locations: widget.stay.places.map((e) => e.location).toList(),
+                              locations: widget.stay.places.map((e) => MapLocation.fromPlace(e)).toList(),
                               highlightedIndex: highlightIndex,
                               centre: widget.stay.location,
                               key: Key(widget.stay.location.toString()),

@@ -3,6 +3,15 @@ import 'dart:math';
 import 'package:flight_deck/models/place.dart';
 import 'package:latlong2/latlong.dart';
 
+enum ArrivalType {
+  flight,
+  train,
+  bus,
+  car,
+  boat,
+  other,
+}
+
 class Stay {
   final DateTime start;
   final DateTime end;
@@ -10,6 +19,7 @@ class Stay {
   final List<Place> places;
   final LatLng location;
   final String? name;
+  final ArrivalType? arrivalType;
 
   /// if the date is fixed, it will not be automatically updated unless the user explicitly changes it
   final bool isFixedDate;
@@ -24,6 +34,7 @@ class Stay {
     required this.places,
     this.name,
     required this.isFixedDate,
+    this.arrivalType,
   });
 
   factory Stay.fromJson(Map<String, dynamic> json) {
@@ -56,7 +67,7 @@ class Stay {
     return Stay(
       start: DateTime.now(),
       end: DateTime.now(),
-      location: LatLng(0, 0),
+      location: const LatLng(0, 0),
       places: [],
       isFixedDate: false,
     );

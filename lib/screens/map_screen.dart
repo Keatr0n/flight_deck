@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flight_deck/models/flight_deck_db.dart';
+import 'package:flight_deck/models/map_location.dart';
 import 'package:flight_deck/models/stay.dart';
 import 'package:flight_deck/widgets/deck_window.dart';
 import 'package:flight_deck/widgets/map_widget.dart';
@@ -53,13 +54,15 @@ class _MapScreenState extends State<MapScreen> {
                 context: context,
                 builder: (context) => Material(
                   color: Colors.black38,
-                  child: Padding(padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20), child: StayWidget(stay: stays[index], onClose: () => Navigator.of(context).pop())),
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                      child: StayWidget(stay: stays[index], onClose: () => Navigator.of(context).pop())),
                 ),
               );
             },
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            locations: [for (var stay in stays) stay.location],
+            locations: [for (var stay in stays) MapLocation.pointOnMap(stay.location)],
           ),
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flight_deck/models/flight_deck_db.dart';
+import 'package:flight_deck/models/map_location.dart';
 import 'package:flight_deck/models/stay.dart';
 import 'package:flight_deck/widgets/deck_window.dart';
 import 'package:flight_deck/widgets/map_widget.dart';
@@ -24,7 +25,7 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
   DateTime start = DateTime.now();
   DateTime end = DateTime.now().add(const Duration(days: 1));
 
-  LatLng location = LatLng(0, 0);
+  LatLng location = const LatLng(0, 0);
 
   int getDaysInMonth(DateTime date) {
     if (date.month == 12) return 31;
@@ -103,7 +104,10 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                       value: start.day,
                     ),
                     DropdownButton<int>(
-                      items: List.generate(12, (index) => DropdownMenuItem<int>(value: index + 1, child: Text("${DateFormat.LLL().format(DateTime(start.year, index + 1, 1))} (${index + 1})"))),
+                      items: List.generate(
+                          12,
+                          (index) => DropdownMenuItem<int>(
+                              value: index + 1, child: Text("${DateFormat.LLL().format(DateTime(start.year, index + 1, 1))} (${index + 1})"))),
                       onChanged: (value) {
                         if (getDaysInMonth(DateTime(start.year, value!, 1)) < start.day) {
                           setState(() {
@@ -121,7 +125,8 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                       value: start.month,
                     ),
                     DropdownButton<int>(
-                      items: List.generate(10, (index) => DropdownMenuItem<int>(value: index + DateTime.now().year, child: Text((index + DateTime.now().year).toString()))),
+                      items: List.generate(
+                          10, (index) => DropdownMenuItem<int>(value: index + DateTime.now().year, child: Text((index + DateTime.now().year).toString()))),
                       onChanged: (value) => setState(() {
                         start = DateTime(value!, start.month, start.day);
                         durationController.text = (end.difference(start).inDays).toString();
@@ -146,7 +151,10 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                       value: end.day,
                     ),
                     DropdownButton<int>(
-                      items: List.generate(12, (index) => DropdownMenuItem<int>(value: index + 1, child: Text("${DateFormat.LLL().format(DateTime(end.year, index + 1, 1))} (${index + 1})"))),
+                      items: List.generate(
+                          12,
+                          (index) => DropdownMenuItem<int>(
+                              value: index + 1, child: Text("${DateFormat.LLL().format(DateTime(end.year, index + 1, 1))} (${index + 1})"))),
                       onChanged: (value) {
                         if (getDaysInMonth(DateTime(end.year, value!, 1)) < end.day) {
                           setState(() {
@@ -164,7 +172,8 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                       value: end.month,
                     ),
                     DropdownButton<int>(
-                      items: List.generate(10, (index) => DropdownMenuItem<int>(value: index + DateTime.now().year, child: Text((index + DateTime.now().year).toString()))),
+                      items: List.generate(
+                          10, (index) => DropdownMenuItem<int>(value: index + DateTime.now().year, child: Text((index + DateTime.now().year).toString()))),
                       onChanged: (value) => setState(() {
                         end = DateTime(value!, end.month, end.day);
                         durationController.text = (end.difference(start).inDays).toString();
@@ -203,7 +212,7 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                 const SizedBox(height: 10),
                 MapWidget(
                   width: MediaQuery.of(context).size.width,
-                  locations: [location],
+                  locations: [MapLocation(location: location)],
                   onTap: (_, location) {
                     this.location = location;
                     setState(() {});

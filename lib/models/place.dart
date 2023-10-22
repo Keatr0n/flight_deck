@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:latlong2/latlong.dart';
 
+/// A place is a specific point of interest, in a stay.
 class Place {
   final String name;
   final String? address;

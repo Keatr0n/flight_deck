@@ -1,3 +1,4 @@
+import 'package:flight_deck/models/map_location.dart';
 import 'package:flight_deck/models/place.dart';
 import 'package:flight_deck/widgets/deck_button.dart';
 import 'package:flight_deck/widgets/deck_window.dart';
@@ -19,7 +20,7 @@ class _MakePlaceWidgetState extends State<MakePlaceWidget> {
   final notesController = TextEditingController();
   final addressController = TextEditingController();
 
-  LatLng location = LatLng(0, 0);
+  LatLng location = const LatLng(0, 0);
 
   @override
   void dispose() {
@@ -32,7 +33,7 @@ class _MakePlaceWidgetState extends State<MakePlaceWidget> {
   @override
   Widget build(BuildContext context) {
     if (location.latitude == 0 && location.longitude == 0) {
-      location = widget.initialLocation ?? LatLng(0, 0);
+      location = widget.initialLocation ?? const LatLng(0, 0);
     }
 
     return DeckWindow(
@@ -83,7 +84,7 @@ class _MakePlaceWidgetState extends State<MakePlaceWidget> {
                 MapWidget(
                   width: MediaQuery.of(context).size.width,
                   initialLocation: widget.initialLocation,
-                  locations: [location],
+                  locations: [MapLocation.pointOnMap(location)],
                   onTap: (_, location) {
                     this.location = location;
                     setState(() {});
