@@ -1,3 +1,4 @@
+import 'package:flight_deck/models/airport_handler.dart';
 import 'package:flight_deck/models/flight_deck_db.dart';
 import 'package:flight_deck/screens/home_screen.dart';
 import 'package:flight_deck/utils/theme_utils.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlightDeckDB.instance.init();
+  await AirportHandler.instance.init();
 
   // FOR TESTING ONLY, THIS WILL NUKE YOUR DB
   // FlightDeckDB.instance.wipeDB();

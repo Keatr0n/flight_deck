@@ -21,6 +21,7 @@ class MapWidget extends StatefulWidget {
     this.width,
     this.centre,
     this.initialLocation,
+    this.mapController,
   });
 
   final List<MapLocation>? locations;
@@ -30,6 +31,7 @@ class MapWidget extends StatefulWidget {
   final double? height;
   final double? width;
   final LatLng? initialLocation;
+  final MapController? mapController;
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
@@ -41,7 +43,7 @@ class _MapWidgetState extends State<MapWidget> {
   late final LatLng initialLocation;
   late final double initialZoom;
 
-  final MapController mapController = MapController();
+  late final MapController mapController;
 
   List<Marker> _buildMarkers() {
     final output = <Marker>[];
@@ -73,6 +75,8 @@ class _MapWidgetState extends State<MapWidget> {
   @override
   void initState() {
     LatLng? initialLocationNullable;
+
+    mapController = widget.mapController ?? MapController();
 
     if (widget.centre != null) {
       initialLocationNullable = widget.centre!;

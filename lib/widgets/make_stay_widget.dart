@@ -1,9 +1,13 @@
+import 'package:flight_deck/models/airport.dart';
+import 'package:flight_deck/models/airport_handler.dart';
 import 'package:flight_deck/models/flight_deck_db.dart';
 import 'package:flight_deck/models/map_location.dart';
 import 'package:flight_deck/models/stay.dart';
+import 'package:flight_deck/widgets/deck_button.dart';
 import 'package:flight_deck/widgets/deck_window.dart';
 import 'package:flight_deck/widgets/map_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -21,6 +25,10 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController notesController = TextEditingController();
   final TextEditingController durationController = TextEditingController();
+  final TextEditingController locationSearchController = TextEditingController();
+  final MapController mapController = MapController();
+
+  List<Airport> searchResults = [];
 
   DateTime start = DateTime.now();
   DateTime end = DateTime.now().add(const Duration(days: 1));
@@ -38,6 +46,8 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
     nameController.dispose();
     notesController.dispose();
     durationController.dispose();
+    locationSearchController.dispose();
+    mapController.dispose();
     super.dispose();
   }
 
@@ -47,6 +57,7 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
       nameController.text = widget.existingStay!.name ?? "";
       notesController.text = widget.existingStay!.notes ?? "";
       durationController.text = widget.existingStay!.stayLength.toString();
+      locationSearchController.text = AirportHandler.instance.getAirportByLocation(widget.existingStay!.location)?.name ?? "";
       start = widget.existingStay!.start;
       end = widget.existingStay!.end;
       location = widget.existingStay!.location;
@@ -189,7 +200,6 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50),
                   child: TextField(
-                    controller: durationController,
                     keyboardType: TextInputType.number,
                     style: const TextStyle(color: Color(0xFFE90808)),
                     decoration: const InputDecoration(
@@ -209,10 +219,64 @@ class _MakeStayWidgetState extends State<MakeStayWidget> {
                     },
                   ),
                 ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 50),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: locationSearchController,
+                        style: const TextStyle(color: Color(0xFFE90808)),
+                        decoration: const InputDecoration(
+                          label: Text("SEARCH LOCATION"),
+                          labelStyle: TextStyle(color: Color(0xFFE90808)),
+                          fillColor: Colors.black26,
+                          filled: true,
+                        ),
+                        onChanged: (value) {
+                          if (value.isNotEmpty) {
+                            searchResults = AirportHandler.instance.search(value);
+                            if (searchResults.isNotEmpty && searchResults.length == 1) {
+                              location = searchResults.first.location;
+                              locationSearchController.text = searchResults.first.name;
+                              mapController.move(searchResults.first.location, 8);
+                            }
+
+                            if (searchResults.isNotEmpty && searchResults.length > 4) {
+                              searchResults = searchResults.getRange(0, 4).toList();
+                            }
+                            setState(() {});
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      if (searchResults.isNotEmpty)
+                        for (var result in searchResults)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 3),
+                            child: DeckButton(
+                              onTap: () {
+                                location = result.location;
+                                locationSearchController.text = result.name;
+                                mapController.move(result.location, 8);
+
+                                setState(() {});
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                width: MediaQuery.of(context).size.width,
+                                child: Text("${result.name} (${result.iataCode.isEmpty ? result.identCode : result.iataCode})"),
+                              ),
+                            ),
+                          ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 10),
                 MapWidget(
                   width: MediaQuery.of(context).size.width,
                   locations: [MapLocation(location: location)],
+                  mapController: mapController,
                   onTap: (_, location) {
                     this.location = location;
                     setState(() {});

@@ -58,7 +58,7 @@ class ThemeUtils {
         return ThemeData(
           primarySwatch: createMaterialColor(const Color(0xFFDF2727)),
           primaryColor: const Color(0xFFDF2727),
-          colorScheme: const ColorScheme.dark(background: Color(0xFF171717), primary: Color(0xFFDF2727)),
+          colorScheme: const ColorScheme.dark(surface: Color(0xFF171717), primary: Color(0xFFDF2727)),
           scaffoldBackgroundColor: const Color(0xFF171717),
           fontFamily: "FiraCode",
           useMaterial3: true,

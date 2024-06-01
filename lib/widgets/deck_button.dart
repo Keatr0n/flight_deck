@@ -9,7 +9,7 @@ class DeckButton extends StatelessWidget {
     this.child,
     this.width,
     this.height,
-    this.borderWidth = 1,
+    this.borderWidth = 2,
   });
 
   final void Function()? onTap;
@@ -35,6 +35,7 @@ class DeckButton extends StatelessWidget {
         width: width,
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).primaryColor, width: borderWidth),
+          color: Colors.black26,
         ),
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         child: child,
