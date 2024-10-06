@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:flight_deck/models/app_state_memory.dart';
 import 'package:flight_deck/models/asset_vector_tile_provider.dart';
+import 'package:flight_deck/models/flight_deck_db.dart';
 import 'package:flight_deck/models/map_location.dart';
 import 'package:flight_deck/utils/map_utils.dart';
 import 'package:flutter/material.dart';
@@ -42,8 +45,12 @@ class _MapWidgetState extends State<MapWidget> {
   late final vtr.Theme theme;
   late final LatLng initialLocation;
   late final double initialZoom;
+  List<Marker> markers = [];
 
   late final MapController mapController;
+
+  late final StreamSubscription mapEventStream;
+  Timer moveDebouncer = Timer(const Duration(seconds: 1), () {});
 
   List<Marker> _buildMarkers() {
     final output = <Marker>[];
@@ -69,6 +76,23 @@ class _MapWidgetState extends State<MapWidget> {
       ));
     }
 
+    try {
+      output.removeWhere((element) => !(mapController.bounds?.contains(element.point) ?? false));
+    } catch (e) {
+      // it just hasn't been initialised yet
+    }
+
+    if (output.length > 100) {
+      try {
+        output.sort((a, b) => MapUtils.getDistance(a.point, mapController.center).compareTo(MapUtils.getDistance(b.point, mapController.center)));
+      } catch (e) {
+        // again, hasn't been initialised
+        output.sort((a, b) => MapUtils.getDistance(a.point, initialLocation).compareTo(MapUtils.getDistance(b.point, initialLocation)));
+      }
+
+      output.removeRange(100, output.length);
+    }
+
     return output;
   }
 
@@ -78,17 +102,29 @@ class _MapWidgetState extends State<MapWidget> {
 
     mapController = widget.mapController ?? MapController();
 
-    if (widget.centre != null) {
-      initialLocationNullable = widget.centre!;
-    }
+    mapEventStream = mapController.mapEventStream.listen((event) {
+      moveDebouncer.cancel();
+      if (event is MapEventMoveEnd || event is MapEventFlingAnimationEnd || event is MapEventFlingAnimationNotStarted || event is MapEventScrollWheelZoom) {
+        moveDebouncer = Timer(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            FlightDeckDB.instance.updateAppStateMemory(AppStateMemory((mapController.center, mapController.zoom)));
+            setState(() {
+              markers = _buildMarkers();
+            });
+          }
+        });
+      }
+    });
 
-    if (widget.locations != null && widget.locations!.isNotEmpty) {
+    if (widget.centre != null) {
+      initialLocationNullable = widget.centre;
+      initialZoom = 8;
+    } else if (FlightDeckDB.instance.appStateMemory.lastMapLocation != null) {
+      initialLocationNullable = FlightDeckDB.instance.appStateMemory.lastMapLocation!.$1;
+      initialZoom = FlightDeckDB.instance.appStateMemory.lastMapLocation!.$2;
+    } else if (widget.locations != null && widget.locations!.isNotEmpty) {
       initialLocationNullable ??= [
-        widget.locations!
-            .map((e) => [e.location.latitude, e.location.longitude])
-            .reduce((value, element) => [value[0] + element[0], value[1] + element[1]])
-            .map((e) => e / widget.locations!.length)
-            .toList()
+        widget.locations!.map((e) => [e.location.latitude, e.location.longitude]).reduce((value, element) => [value[0] + element[0], value[1] + element[1]]).map((e) => e / widget.locations!.length).toList()
       ].map((e) => LatLng(e[0], e[1])).first;
 
       final averageDistance = MapUtils.getDistance(initialLocationNullable, widget.locations!.first.location);
@@ -105,9 +141,12 @@ class _MapWidgetState extends State<MapWidget> {
     } else {
       initialZoom = 8;
     }
+
     initialLocationNullable ??= widget.initialLocation ?? const LatLng(51.5, -0.09);
 
     initialLocation = initialLocationNullable;
+
+    markers = _buildMarkers();
 
     rootBundle.loadString("assets/map_theme.json").then((value) {
       theme = vtr.ThemeReader().read(jsonDecode(value) as Map<String, dynamic>);
@@ -117,6 +156,12 @@ class _MapWidgetState extends State<MapWidget> {
     });
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    mapEventStream.cancel();
+    super.dispose();
   }
 
   @override
@@ -141,9 +186,9 @@ class _MapWidgetState extends State<MapWidget> {
         children: [
           VectorTileLayer(
             theme: theme,
-            tileProviders: TileProviders({"openmaptiles": AssetVectorTileProvider("assets/map_tiles/{z}/{x}/{y}.pbf", 5, 0)}),
+            tileProviders: TileProviders({"openmaptiles": AssetVectorTileProvider("assets/map_tiles/{z}/{x}/{y}.pbf", 6, 0)}),
           ),
-          MarkerLayer(markers: _buildMarkers()),
+          MarkerLayer(markers: markers),
         ],
       ),
     );

@@ -1,6 +1,33 @@
 import 'package:latlong2/latlong.dart';
 
-enum AirportType { largeAirport, mediumAirport, smallAirport, seaplaneBase, heliport, balloonport, closed }
+enum AirportType {
+  largeAirport,
+  mediumAirport,
+  smallAirport,
+  seaplaneBase,
+  heliport,
+  balloonport,
+  closed;
+
+  String get name {
+    switch (this) {
+      case AirportType.largeAirport:
+        return "Large Airport";
+      case AirportType.mediumAirport:
+        return "Medium Airport";
+      case AirportType.smallAirport:
+        return "Small Airport";
+      case AirportType.seaplaneBase:
+        return "Seaplane Base";
+      case AirportType.heliport:
+        return "Heliport";
+      case AirportType.balloonport:
+        return "Balloonport";
+      case AirportType.closed:
+        return "Closed";
+    }
+  }
+}
 
 class Airport {
   final String identCode;

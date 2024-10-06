@@ -73,8 +73,7 @@ class _StayWidgetState extends State<StayWidget> {
       return DeckWindow(
         onClose: widget.onClose,
         hasWindowBar: !widget.isMini,
-        title: widget.stay.name,
-        child: child,
+        tabs: [DeckWindowTab(title: widget.stay.name ?? "Stay", child: child)],
       );
     } else {
       return child;
@@ -94,8 +93,7 @@ class _StayWidgetState extends State<StayWidget> {
             children: [
               Text(widget.stay.name ?? "", overflow: TextOverflow.ellipsis),
               const SizedBox(height: 10),
-              Text(
-                  "${widget.stay.start.day}/${widget.stay.start.month}/${widget.stay.start.year} -> ${widget.stay.end.day}/${widget.stay.end.month}/${widget.stay.end.year}"),
+              Text("${widget.stay.start.day}/${widget.stay.start.month}/${widget.stay.start.year} -> ${widget.stay.end.day}/${widget.stay.end.month}/${widget.stay.end.year}"),
               Text("${widget.stay.stayLength} ${widget.stay.stayLength == 1 ? "night" : "nights"}"),
               const SizedBox(height: 10),
               Text("${widget.stay.location.latitude.toStringAsFixed(3)}, ${widget.stay.location.longitude.toStringAsFixed(3)}"),
@@ -107,7 +105,7 @@ class _StayWidgetState extends State<StayWidget> {
 
     return deckWindowWrapper(
       SizedBox(
-        height: MediaQuery.of(context).size.height * 0.8,
+        height: MediaQuery.of(context).size.height * 0.75,
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),

@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flight_deck/models/app_state_memory.dart';
+import 'package:flight_deck/models/checklist.dart';
 import 'package:flight_deck/models/job_scheduler.dart';
 import 'package:flight_deck/models/stay.dart';
 import 'package:flight_deck/models/user_settings.dart';
 import 'package:flight_deck/utils/file_utils.dart';
+import 'package:flutter/services.dart';
 
 class FlightDeckDB {
   FlightDeckDB._();
@@ -24,6 +27,12 @@ class FlightDeckDB {
   UserSettings _userSettings = UserSettings.empty();
   UserSettings get userSettings => _userSettings;
 
+  AppStateMemory _appStateMemory = AppStateMemory.empty();
+  AppStateMemory get appStateMemory => _appStateMemory;
+
+  List<Checklist> _checklists = [];
+  List<Checklist> get checklists => _checklists;
+
   final JobScheduler _jobScheduler = JobScheduler();
 
   Future<void> init() async {
@@ -41,8 +50,10 @@ class FlightDeckDB {
     }
 
     final jsonData = jsonDecode(jsonString);
-    _stays = (jsonData['stays'] as List).map<Stay>((e) => Stay.fromJson(e)).toList();
+    _stays = List.from(jsonData['stays']).map<Stay>((e) => Stay.fromJson(e)).toList();
     _userSettings = UserSettings.fromJson(jsonData['userSettings'] ?? {});
+    _appStateMemory = AppStateMemory.fromJson(jsonData['appStateMemory'] ?? {});
+    _checklists = List.from(jsonData['checklists']).map<Checklist>((e) => Checklist.fromJson(e)).toList();
     _initialized = true;
 
     return;
@@ -62,7 +73,35 @@ class FlightDeckDB {
   void wipeDB() {
     _stays = [];
     _userSettings = UserSettings.empty();
+    _appStateMemory = AppStateMemory.empty();
+    _checklists = [];
     _jobScheduler.addJob(save);
+  }
+
+  void export() {
+    final jsonString = jsonEncode({
+      'stays': _stays.map((e) => e.toJson()).toList(),
+      'userSettings': _userSettings.toJson(),
+      'appStateMemory': _appStateMemory.toJson(),
+      'checklists': _checklists.map((e) => e.toJson()).toList(),
+    });
+
+    Clipboard.setData(ClipboardData(text: jsonString));
+  }
+
+  void import() async {
+    final jsonString = (await Clipboard.getData("text/plain"))?.text ?? "";
+
+    if (jsonString.isEmpty) return;
+
+    final jsonData = jsonDecode(jsonString);
+    _stays = List.from(jsonData['stays']).map<Stay>((e) => Stay.fromJson(e)).toList();
+    _userSettings = UserSettings.fromJson(jsonData['userSettings'] ?? {});
+    _appStateMemory = AppStateMemory.fromJson(jsonData['appStateMemory'] ?? {});
+    _checklists = List.from(jsonData['checklists']).map<Checklist>((e) => Checklist.fromJson(e)).toList();
+    _initialized = true;
+
+    save();
   }
 
   Future<void> save() async {
@@ -71,6 +110,8 @@ class FlightDeckDB {
     final jsonString = jsonEncode({
       'stays': _stays.map((e) => e.toJson()).toList(),
       'userSettings': _userSettings.toJson(),
+      'appStateMemory': _appStateMemory.toJson(),
+      'checklists': _checklists.map((e) => e.toJson()).toList(),
     });
 
     await FileUtils.writeLocalFile(fileName, jsonString);
@@ -93,6 +134,26 @@ class FlightDeckDB {
   void updateStay(int index, Stay stay) {
     _stays[index] = stay;
     _stays.sort((a, b) => a.start.compareTo(b.start));
+    _jobScheduler.addJob(save);
+  }
+
+  void updateAppStateMemory(AppStateMemory appStateMemory) {
+    _appStateMemory = appStateMemory;
+    _jobScheduler.addJob(save);
+  }
+
+  void addChecklist(Checklist checklist) {
+    _checklists.add(checklist);
+    _jobScheduler.addJob(save);
+  }
+
+  void deleteChecklist(Checklist checklist) {
+    _checklists.remove(checklist);
+    _jobScheduler.addJob(save);
+  }
+
+  void updateChecklist(int index, Checklist checklist) {
+    _checklists[index] = checklist;
     _jobScheduler.addJob(save);
   }
 }

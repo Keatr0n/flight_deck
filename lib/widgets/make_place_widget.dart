@@ -38,77 +38,82 @@ class _MakePlaceWidgetState extends State<MakePlaceWidget> {
 
     return DeckWindow(
       onClose: Navigator.of(context).pop,
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.8,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                TextField(
-                  controller: nameController,
-                  style: const TextStyle(color: Color(0xFFE90808)),
-                  decoration: const InputDecoration(
-                    label: Text("NAME"),
-                    labelStyle: TextStyle(color: Color(0xFFE90808)),
-                    fillColor: Colors.black26,
-                    filled: true,
-                  ),
+      tabs: [
+        DeckWindowTab(
+          title: "Place",
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.8,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    TextField(
+                      controller: nameController,
+                      style: const TextStyle(color: Color(0xFFE90808)),
+                      decoration: const InputDecoration(
+                        label: Text("NAME"),
+                        labelStyle: TextStyle(color: Color(0xFFE90808)),
+                        fillColor: Colors.black26,
+                        filled: true,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: notesController,
+                      minLines: 2,
+                      maxLines: 5,
+                      style: const TextStyle(color: Color(0xFFE90808)),
+                      decoration: const InputDecoration(
+                        label: Text("NOTES"),
+                        labelStyle: TextStyle(color: Color(0xFFE90808)),
+                        fillColor: Colors.black26,
+                        filled: true,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: addressController,
+                      style: const TextStyle(color: Color(0xFFE90808)),
+                      decoration: const InputDecoration(
+                        label: Text("ADDRESS"),
+                        labelStyle: TextStyle(color: Color(0xFFE90808)),
+                        fillColor: Colors.black26,
+                        filled: true,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    MapWidget(
+                      width: MediaQuery.of(context).size.width,
+                      initialLocation: widget.initialLocation,
+                      locations: [MapLocation.pointOnMap(location)],
+                      onTap: (_, location) {
+                        this.location = location;
+                        setState(() {});
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    DeckButton(
+                      onTap: () {
+                        final newPlace = Place(
+                          name: nameController.text,
+                          notes: notesController.text,
+                          location: location,
+                          address: addressController.text,
+                        );
+                        widget.onDone?.call(newPlace);
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("DONE"),
+                    )
+                  ],
                 ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: notesController,
-                  minLines: 2,
-                  maxLines: 5,
-                  style: const TextStyle(color: Color(0xFFE90808)),
-                  decoration: const InputDecoration(
-                    label: Text("NOTES"),
-                    labelStyle: TextStyle(color: Color(0xFFE90808)),
-                    fillColor: Colors.black26,
-                    filled: true,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: addressController,
-                  style: const TextStyle(color: Color(0xFFE90808)),
-                  decoration: const InputDecoration(
-                    label: Text("ADDRESS"),
-                    labelStyle: TextStyle(color: Color(0xFFE90808)),
-                    fillColor: Colors.black26,
-                    filled: true,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                MapWidget(
-                  width: MediaQuery.of(context).size.width,
-                  initialLocation: widget.initialLocation,
-                  locations: [MapLocation.pointOnMap(location)],
-                  onTap: (_, location) {
-                    this.location = location;
-                    setState(() {});
-                  },
-                ),
-                const SizedBox(height: 10),
-                DeckButton(
-                  onTap: () {
-                    final newPlace = Place(
-                      name: nameController.text,
-                      notes: notesController.text,
-                      location: location,
-                      address: addressController.text,
-                    );
-                    widget.onDone?.call(newPlace);
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("DONE"),
-                )
-              ],
+              ),
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }

@@ -1,19 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+/// If [hasWindowBar] is false, there must only be one child
 class DeckWindow extends StatefulWidget {
-  const DeckWindow({
+  DeckWindow({
     super.key,
     this.onClose,
-    this.child,
+    this.tabs,
     this.onMove,
-    this.title,
     this.hasWindowBar = true,
-    this.backgroundOpacity = 0.496,
-  });
+    this.backgroundOpacity = 0.15,
+  }) {
+    assert(hasWindowBar || tabs == null || tabs!.length < 2);
+  }
 
-  final Widget? child;
-  final String? title;
+  factory DeckWindow.single({
+    key,
+    void Function()? onClose,
+    void Function(double x, double y)? onMove,
+    bool hasWindowBar = true,
+    double backgroundOpacity = 0.15,
+    Widget? child,
+    String title = "",
+  }) {
+    return DeckWindow(
+      key: key,
+      onClose: onClose,
+      onMove: onMove,
+      hasWindowBar: hasWindowBar,
+      backgroundOpacity: backgroundOpacity,
+      tabs: child != null ? [DeckWindowTab(title: title, child: child)] : null,
+    );
+  }
+
+  final List<DeckWindowTab>? tabs;
   final void Function()? onClose;
   final void Function(double x, double y)? onMove;
   final bool hasWindowBar;
@@ -25,6 +45,7 @@ class DeckWindow extends StatefulWidget {
 
 class _DeckWindowState extends State<DeckWindow> {
   bool isMinimized = false;
+  int tabSelected = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +65,7 @@ class _DeckWindowState extends State<DeckWindow> {
             tileMode: TileMode.repeated,
           ),
         ),
-        child: widget.child,
+        child: widget.tabs?.first.child,
       );
     }
 
@@ -57,7 +78,7 @@ class _DeckWindowState extends State<DeckWindow> {
             },
             onLongPressMoveUpdate: (details) => widget.onMove?.call(details.localPosition.dx, details.localPosition.dy),
             child: Container(
-              height: 30,
+              height: 40,
               decoration: BoxDecoration(
                 border: Border.all(color: const Color(0xAFA60707), width: 2),
                 color: const Color(0x7FA60707),
@@ -66,9 +87,27 @@ class _DeckWindowState extends State<DeckWindow> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(widget.title ?? "", style: const TextStyle(fontWeight: FontWeight.w600)),
+                  Row(
+                    children: [
+                      for (var i = 0; i < (widget.tabs?.length ?? 0); i++)
+                        Container(
+                          decoration: BoxDecoration(border: Border.all(color: const Color(0x7FA60707), width: 2)),
+                          child: TextButton(
+                            child: Text(
+                              widget.tabs?[i].title ?? "",
+                              style: TextStyle(
+                                fontWeight: tabSelected == i ? FontWeight.bold : FontWeight.normal,
+                                color: const Color(0xFFDF2727),
+                              ),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                tabSelected = i;
+                              });
+                            },
+                          ),
+                        ),
+                    ],
                   ),
                   Row(
                     children: [
@@ -100,7 +139,11 @@ class _DeckWindowState extends State<DeckWindow> {
                           ),
                           alignment: Alignment.center,
                           onPressed: () {
-                            widget.onClose?.call();
+                            if (widget.onClose != null) {
+                              widget.onClose!();
+                            } else {
+                              if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+                            }
                           },
                         ),
                       ),
@@ -128,10 +171,17 @@ class _DeckWindowState extends State<DeckWindow> {
                     ),
                   ),
                   width: double.infinity,
-                  child: widget.child,
+                  child: widget.tabs?[tabSelected].child,
                 ),
         ],
       ),
     );
   }
+}
+
+class DeckWindowTab {
+  String title;
+  Widget child;
+
+  DeckWindowTab({required this.title, required this.child});
 }

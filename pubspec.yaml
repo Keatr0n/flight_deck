@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -20,7 +20,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -45,7 +45,7 @@ dependencies:
   url_launcher: ^6.1.10
   intl: ^0.18.0
   flutter_launcher_icons: ^0.13.1
-
+  # qr_flutter: ^4.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -74,7 +74,6 @@ flutter_icons:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -82,70 +81,134 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-      - assets/
-      - assets/data_sets/
-      - assets/map_tiles/1/0/
-      - assets/map_tiles/1/1/
-      - assets/map_tiles/2/0/
-      - assets/map_tiles/2/1/
-      - assets/map_tiles/2/2/
-      - assets/map_tiles/2/3/
-      - assets/map_tiles/3/0/
-      - assets/map_tiles/3/1/
-      - assets/map_tiles/3/2/
-      - assets/map_tiles/3/3/
-      - assets/map_tiles/3/4/
-      - assets/map_tiles/3/5/
-      - assets/map_tiles/3/6/
-      - assets/map_tiles/3/7/
-      - assets/map_tiles/4/0/
-      - assets/map_tiles/4/1/
-      - assets/map_tiles/4/2/
-      - assets/map_tiles/4/3/
-      - assets/map_tiles/4/4/
-      - assets/map_tiles/4/5/
-      - assets/map_tiles/4/6/
-      - assets/map_tiles/4/7/
-      - assets/map_tiles/4/8/
-      - assets/map_tiles/4/9/
-      - assets/map_tiles/4/10/
-      - assets/map_tiles/4/11/
-      - assets/map_tiles/4/12/
-      - assets/map_tiles/4/13/
-      - assets/map_tiles/4/14/
-      - assets/map_tiles/4/15/
-      - assets/map_tiles/5/0/
-      - assets/map_tiles/5/1/
-      - assets/map_tiles/5/2/
-      - assets/map_tiles/5/3/
-      - assets/map_tiles/5/4/
-      - assets/map_tiles/5/5/
-      - assets/map_tiles/5/6/
-      - assets/map_tiles/5/7/
-      - assets/map_tiles/5/8/
-      - assets/map_tiles/5/9/
-      - assets/map_tiles/5/10/
-      - assets/map_tiles/5/11/
-      - assets/map_tiles/5/12/
-      - assets/map_tiles/5/13/
-      - assets/map_tiles/5/14/
-      - assets/map_tiles/5/15/
-      - assets/map_tiles/5/16/
-      - assets/map_tiles/5/17/
-      - assets/map_tiles/5/18/
-      - assets/map_tiles/5/19/
-      - assets/map_tiles/5/20/
-      - assets/map_tiles/5/21/
-      - assets/map_tiles/5/22/
-      - assets/map_tiles/5/23/
-      - assets/map_tiles/5/24/
-      - assets/map_tiles/5/25/
-      - assets/map_tiles/5/26/
-      - assets/map_tiles/5/27/
-      - assets/map_tiles/5/28/
-      - assets/map_tiles/5/29/
-      - assets/map_tiles/5/30/
-      - assets/map_tiles/5/31/
+    - assets/
+    - assets/data_sets/
+    - assets/map_tiles/1/0/
+    - assets/map_tiles/1/1/
+    - assets/map_tiles/2/0/
+    - assets/map_tiles/2/1/
+    - assets/map_tiles/2/2/
+    - assets/map_tiles/2/3/
+    - assets/map_tiles/3/0/
+    - assets/map_tiles/3/1/
+    - assets/map_tiles/3/2/
+    - assets/map_tiles/3/3/
+    - assets/map_tiles/3/4/
+    - assets/map_tiles/3/5/
+    - assets/map_tiles/3/6/
+    - assets/map_tiles/3/7/
+    - assets/map_tiles/4/0/
+    - assets/map_tiles/4/1/
+    - assets/map_tiles/4/2/
+    - assets/map_tiles/4/3/
+    - assets/map_tiles/4/4/
+    - assets/map_tiles/4/5/
+    - assets/map_tiles/4/6/
+    - assets/map_tiles/4/7/
+    - assets/map_tiles/4/8/
+    - assets/map_tiles/4/9/
+    - assets/map_tiles/4/10/
+    - assets/map_tiles/4/11/
+    - assets/map_tiles/4/12/
+    - assets/map_tiles/4/13/
+    - assets/map_tiles/4/14/
+    - assets/map_tiles/4/15/
+    - assets/map_tiles/5/0/
+    - assets/map_tiles/5/1/
+    - assets/map_tiles/5/2/
+    - assets/map_tiles/5/3/
+    - assets/map_tiles/5/4/
+    - assets/map_tiles/5/5/
+    - assets/map_tiles/5/6/
+    - assets/map_tiles/5/7/
+    - assets/map_tiles/5/8/
+    - assets/map_tiles/5/9/
+    - assets/map_tiles/5/10/
+    - assets/map_tiles/5/11/
+    - assets/map_tiles/5/12/
+    - assets/map_tiles/5/13/
+    - assets/map_tiles/5/14/
+    - assets/map_tiles/5/15/
+    - assets/map_tiles/5/16/
+    - assets/map_tiles/5/17/
+    - assets/map_tiles/5/18/
+    - assets/map_tiles/5/19/
+    - assets/map_tiles/5/20/
+    - assets/map_tiles/5/21/
+    - assets/map_tiles/5/22/
+    - assets/map_tiles/5/23/
+    - assets/map_tiles/5/24/
+    - assets/map_tiles/5/25/
+    - assets/map_tiles/5/26/
+    - assets/map_tiles/5/27/
+    - assets/map_tiles/5/28/
+    - assets/map_tiles/5/29/
+    - assets/map_tiles/5/30/
+    - assets/map_tiles/5/31/
+    - assets/map_tiles/6/0/
+    - assets/map_tiles/6/1/
+    - assets/map_tiles/6/2/
+    - assets/map_tiles/6/3/
+    - assets/map_tiles/6/4/
+    - assets/map_tiles/6/5/
+    - assets/map_tiles/6/6/
+    - assets/map_tiles/6/7/
+    - assets/map_tiles/6/8/
+    - assets/map_tiles/6/9/
+    - assets/map_tiles/6/10/
+    - assets/map_tiles/6/11/
+    - assets/map_tiles/6/12/
+    - assets/map_tiles/6/13/
+    - assets/map_tiles/6/14/
+    - assets/map_tiles/6/15/
+    - assets/map_tiles/6/16/
+    - assets/map_tiles/6/17/
+    - assets/map_tiles/6/18/
+    - assets/map_tiles/6/19/
+    - assets/map_tiles/6/20/
+    - assets/map_tiles/6/21/
+    - assets/map_tiles/6/22/
+    - assets/map_tiles/6/23/
+    - assets/map_tiles/6/24/
+    - assets/map_tiles/6/25/
+    - assets/map_tiles/6/26/
+    - assets/map_tiles/6/27/
+    - assets/map_tiles/6/28/
+    - assets/map_tiles/6/29/
+    - assets/map_tiles/6/30/
+    - assets/map_tiles/6/31/
+    - assets/map_tiles/6/32/
+    - assets/map_tiles/6/33/
+    - assets/map_tiles/6/34/
+    - assets/map_tiles/6/35/
+    - assets/map_tiles/6/36/
+    - assets/map_tiles/6/37/
+    - assets/map_tiles/6/38/
+    - assets/map_tiles/6/39/
+    - assets/map_tiles/6/40/
+    - assets/map_tiles/6/41/
+    - assets/map_tiles/6/42/
+    - assets/map_tiles/6/43/
+    - assets/map_tiles/6/44/
+    - assets/map_tiles/6/45/
+    - assets/map_tiles/6/46/
+    - assets/map_tiles/6/47/
+    - assets/map_tiles/6/48/
+    - assets/map_tiles/6/49/
+    - assets/map_tiles/6/50/
+    - assets/map_tiles/6/51/
+    - assets/map_tiles/6/52/
+    - assets/map_tiles/6/53/
+    - assets/map_tiles/6/54/
+    - assets/map_tiles/6/55/
+    - assets/map_tiles/6/56/
+    - assets/map_tiles/6/57/
+    - assets/map_tiles/6/58/
+    - assets/map_tiles/6/59/
+    - assets/map_tiles/6/60/
+    - assets/map_tiles/6/61/
+    - assets/map_tiles/6/62/
+    - assets/map_tiles/6/63/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

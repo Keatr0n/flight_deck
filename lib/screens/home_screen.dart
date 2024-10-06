@@ -1,8 +1,11 @@
+import 'package:flight_deck/models/flight_deck_db.dart';
+import 'package:flight_deck/screens/checklist_screen.dart';
 import 'package:flight_deck/screens/map_screen.dart';
 import 'package:flight_deck/screens/stays_screen.dart';
-import 'package:flight_deck/screens/timeline_screen.dart';
-import 'package:flight_deck/widgets/make_stay_widget.dart';
+import 'package:flight_deck/widgets/deck_button.dart';
+import 'package:flight_deck/widgets/deck_window.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,12 +17,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int selectedScreen = 0;
 
-  List<String> screenNames = ["STAYS", "TIMELINE", "MAP", "ADD STAY"];
+  List<String> screenNames = ["STAYS", "MAP", "CHECKLISTS"];
   List<Widget> screen = [
     const StaysScreen(),
-    const TimelineScreen(),
     const MapScreen(),
-    const Center(child: Text("ERROR 404: add stay not found")),
+    const ChecklistScreen(),
   ];
 
   @override
@@ -31,20 +33,50 @@ class _HomeScreenState extends State<HomeScreen> {
           for (var i = 0; i < screenNames.length; i++)
             Expanded(
               child: GestureDetector(
-                onTap: () {
-                  if (i == screenNames.length - 1) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => const Material(
-                        color: Colors.black38,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 20),
-                          child: MakeStayWidget(),
+                onLongPress: () {
+                  HapticFeedback.lightImpact();
+                  showDialog(
+                    context: context,
+                    builder: (context) => Material(
+                      color: Colors.black38,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                        child: DeckWindow.single(
+                          title: "DATA RECOVERY",
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 10),
+                              const Text("Import or export your data?"),
+                              const SizedBox(height: 30),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  DeckButton(
+                                    child: const Text("IMPORT"),
+                                    onTap: () {
+                                      FlightDeckDB.instance.import();
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  const SizedBox(width: 10),
+                                  DeckButton(
+                                    child: const Text("EXPORT"),
+                                    onTap: () {
+                                      FlightDeckDB.instance.export();
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                            ],
+                          ),
                         ),
                       ),
-                    );
-                    return;
-                  }
+                    ),
+                  );
+                },
+                onTap: () {
                   selectedScreen = i;
                   setState(() {});
                 },

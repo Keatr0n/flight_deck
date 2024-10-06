@@ -6,6 +6,7 @@ class DeckButton extends StatelessWidget {
   const DeckButton({
     super.key,
     this.onTap,
+    this.onLongPress,
     this.child,
     this.width,
     this.height,
@@ -13,6 +14,7 @@ class DeckButton extends StatelessWidget {
   });
 
   final void Function()? onTap;
+  final void Function()? onLongPress;
   final Widget? child;
   final double? width;
   final double? height;
@@ -30,6 +32,7 @@ class DeckButton extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Container(
         height: height,
         width: width,
