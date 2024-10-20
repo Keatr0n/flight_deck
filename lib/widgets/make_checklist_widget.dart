@@ -141,6 +141,7 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                   ),
                   const SizedBox(height: 50),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       DeckButton(
                         onTap: () async {
@@ -181,7 +182,7 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                         },
                         child: const Text("DELETE"),
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 10),
                       DeckButton(
                         onTap: () {
                           items.removeWhere((element) => element.$1.text.isEmpty && element.$2.text.isEmpty);
@@ -191,6 +192,7 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                         },
                         child: const Text("SAVE"),
                       ),
+                      const SizedBox(width: 5),
                     ],
                   ),
                   const SizedBox(height: 10),
