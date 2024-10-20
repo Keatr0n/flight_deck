@@ -54,7 +54,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                   DeckButton(
                                     child: const Text("IMPORT"),
                                     onTap: () {
-                                      FlightDeckDB.instance.import();
+                                      FlightDeckDB.instance.import().then((err) {
+                                        if (err != null) {
+                                          showDialog(
+                                            // it's fine, don't worry about it
+                                            // ignore: use_build_context_synchronously
+                                            context: context,
+                                            builder: (context) => Material(
+                                              color: Colors.black38,
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                                                child: DeckWindow.single(
+                                                  title: "IMPORT ERROR",
+                                                  child: Text(err),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      });
                                       Navigator.of(context).pop();
                                     },
                                   ),

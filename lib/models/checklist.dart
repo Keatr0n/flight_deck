@@ -11,7 +11,7 @@ class Checklist {
 
   factory Checklist.fromJson(Map<String, dynamic> json) {
     return Checklist(
-      title: json["title"],
+      title: json["title"] ?? "",
       items: List.from(json["items"]).map<ChecklistItem>((e) => ChecklistItem.fromJson(e)).toList(),
       tags: List<String>.from(json["tags"]),
     );
@@ -56,9 +56,9 @@ class ChecklistItem {
 
   factory ChecklistItem.fromJson(Map<String, dynamic> json) {
     return ChecklistItem(
-      title: json["title"],
-      description: json["des"],
-      isDone: json["done"],
+      title: json["title"] ?? "",
+      description: json["des"] ?? "",
+      isDone: json["done"] ?? false,
     );
   }
 

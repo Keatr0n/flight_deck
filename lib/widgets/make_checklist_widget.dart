@@ -1,4 +1,5 @@
 import 'package:flight_deck/models/checklist.dart';
+import 'package:flight_deck/models/flight_deck_db.dart';
 import 'package:flight_deck/widgets/deck_button.dart';
 import 'package:flight_deck/widgets/deck_window.dart';
 import 'package:flutter/material.dart';
@@ -139,14 +140,58 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                     child: const Text("NEW ITEM"),
                   ),
                   const SizedBox(height: 50),
-                  DeckButton(
-                    onTap: () {
-                      items.removeWhere((element) => element.$1.text.isEmpty && element.$2.text.isEmpty);
+                  Row(
+                    children: [
+                      DeckButton(
+                        onTap: () async {
+                          final shouldDelete = await showDialog(
+                            context: context,
+                            builder: (context) => Material(
+                              color: Colors.black38,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                                child: DeckWindow.single(
+                                  title: "DELETE CHECKLIST",
+                                  child: Column(
+                                    children: [
+                                      const SizedBox(height: 10),
+                                      const Text("Are you sure you want to delete this checklist?\nThis action cannot be undone."),
+                                      const SizedBox(height: 30),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          DeckButton(child: const Text("CANCEL"), onTap: () => Navigator.of(context).pop(false)),
+                                          const SizedBox(width: 10),
+                                          DeckButton(child: const Text("DELETE"), onTap: () => Navigator.of(context).pop(true)),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
 
-                      widget.onComplete(Checklist(title: titleController.text, items: items.map((e) => ChecklistItem(title: e.$1.text, description: e.$2.text, isDone: false)).toList(), tags: tags));
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("DONE"),
+                          if (shouldDelete ?? false) {
+                            if (widget.checklist != null) FlightDeckDB.instance.deleteChecklist(widget.checklist!);
+
+                            if (context.mounted) Navigator.of(context).pop();
+                          }
+                        },
+                        child: const Text("DELETE"),
+                      ),
+                      const SizedBox(width: 20),
+                      DeckButton(
+                        onTap: () {
+                          items.removeWhere((element) => element.$1.text.isEmpty && element.$2.text.isEmpty);
+
+                          widget.onComplete(Checklist(title: titleController.text, items: items.map((e) => ChecklistItem(title: e.$1.text, description: e.$2.text, isDone: false)).toList(), tags: tags));
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("SAVE"),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 10),
                 ],

@@ -89,19 +89,30 @@ class FlightDeckDB {
     Clipboard.setData(ClipboardData(text: jsonString));
   }
 
-  void import() async {
+  /// Returns null if import was successful. Otherwise, returns the error message.
+  Future<String?> import() async {
     final jsonString = (await Clipboard.getData("text/plain"))?.text ?? "";
 
-    if (jsonString.isEmpty) return;
+    if (jsonString.isEmpty) return "Clipboard is empty";
 
-    final jsonData = jsonDecode(jsonString);
-    _stays = List.from(jsonData['stays']).map<Stay>((e) => Stay.fromJson(e)).toList();
-    _userSettings = UserSettings.fromJson(jsonData['userSettings'] ?? {});
-    _appStateMemory = AppStateMemory.fromJson(jsonData['appStateMemory'] ?? {});
-    _checklists = List.from(jsonData['checklists']).map<Checklist>((e) => Checklist.fromJson(e)).toList();
-    _initialized = true;
+    try {
+      final jsonData = jsonDecode(jsonString);
 
-    save();
+      _stays = List.from(jsonData['stays']).map<Stay>((e) => Stay.fromJson(e)).toList();
+      _userSettings = UserSettings.fromJson(jsonData['userSettings'] ?? {});
+      _appStateMemory = AppStateMemory.fromJson(jsonData['appStateMemory'] ?? {});
+      _checklists = List.from(jsonData['checklists']).map<Checklist>((e) => Checklist.fromJson(e)).toList();
+      _initialized = true;
+
+      save();
+    } catch (e) {
+      if (e is FormatException) {
+        return "Clipboard is not valid JSON\n\n$jsonString";
+      }
+      return e.toString();
+    }
+
+    return null;
   }
 
   Future<void> save() async {
