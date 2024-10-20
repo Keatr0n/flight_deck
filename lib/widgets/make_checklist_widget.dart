@@ -141,6 +141,8 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                   const SizedBox(height: 50),
                   DeckButton(
                     onTap: () {
+                      items.removeWhere((element) => element.$1.text.isEmpty && element.$2.text.isEmpty);
+
                       widget.onComplete(Checklist(title: titleController.text, items: items.map((e) => ChecklistItem(title: e.$1.text, description: e.$2.text, isDone: false)).toList(), tags: tags));
                       Navigator.of(context).pop();
                     },
