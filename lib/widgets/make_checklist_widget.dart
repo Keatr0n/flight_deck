@@ -15,7 +15,7 @@ class MakeChecklistWidget extends StatefulWidget {
 }
 
 class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
-  List<(TextEditingController, TextEditingController)> items = [];
+  List<(TextEditingController, TextEditingController, ChecklistItemType)> items = [];
   TextEditingController titleController = TextEditingController();
   TextEditingController currentTagController = TextEditingController();
   List<String> tags = [];
@@ -25,7 +25,8 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
     if (widget.checklist != null) {
       for (var i = 0; i < widget.checklist!.items.length; i++) {
         final item = widget.checklist!.items[i];
-        items.add((TextEditingController()..text = item.title, TextEditingController()..text = item.description));
+        items.add(
+            (TextEditingController()..text = item.title, TextEditingController()..text = item.description, item.type));
       }
 
       titleController.text = widget.checklist!.title;
@@ -49,7 +50,11 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                   const SizedBox(height: 10),
                   TextField(
                     controller: titleController,
-                    decoration: const InputDecoration(label: Text("TITLE"), labelStyle: TextStyle(color: Color(0xFFE90808)), fillColor: Colors.black26, filled: true),
+                    decoration: const InputDecoration(
+                        label: Text("TITLE"),
+                        labelStyle: TextStyle(color: Color(0xFFE90808)),
+                        fillColor: Colors.black26,
+                        filled: true),
                     onChanged: (value) {
                       if (mounted) {
                         setState(() {});
@@ -82,7 +87,11 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                   const SizedBox(height: 10),
                   TextField(
                     controller: currentTagController,
-                    decoration: const InputDecoration(label: Text("TAGS"), labelStyle: TextStyle(color: Color(0xFFE90808)), fillColor: Colors.black26, filled: true),
+                    decoration: const InputDecoration(
+                        label: Text("TAGS"),
+                        labelStyle: TextStyle(color: Color(0xFFE90808)),
+                        fillColor: Colors.black26,
+                        filled: true),
                     onSubmitted: (value) {
                       if (!tags.contains(value.substring(0, value.length))) tags.add(value.substring(0, value.length));
                       setState(() {
@@ -90,8 +99,14 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                       });
                     },
                     onChanged: (value) {
-                      if (value.endsWith(",") || value.endsWith(" ") || value.endsWith(";") || value.endsWith(".") || value.endsWith("\n")) {
-                        if (!tags.contains(value.substring(0, value.length - 1))) tags.add(value.substring(0, value.length - 1));
+                      if (value.endsWith(",") ||
+                          value.endsWith(" ") ||
+                          value.endsWith(";") ||
+                          value.endsWith(".") ||
+                          value.endsWith("\n")) {
+                        if (!tags.contains(value.substring(0, value.length - 1))) {
+                          tags.add(value.substring(0, value.length - 1));
+                        }
                         setState(() {
                           currentTagController.text = "";
                         });
@@ -115,15 +130,35 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                               children: [
                                 TextField(
                                   controller: items[i].$1,
-                                  decoration: InputDecoration(label: Text("TASK $i TITLE"), labelStyle: const TextStyle(color: Color(0xFFE90808)), fillColor: Colors.black26, filled: true),
+                                  decoration: InputDecoration(
+                                      label: Text("TASK $i TITLE"),
+                                      labelStyle: const TextStyle(color: Color(0xFFE90808)),
+                                      fillColor: Colors.black26,
+                                      filled: true),
                                   onChanged: (_) => setState(() {}),
                                 ),
                                 const SizedBox(height: 10),
                                 TextField(
                                   controller: items[i].$2,
-                                  decoration: InputDecoration(label: Text("TASK $i DESCRIPTION"), labelStyle: const TextStyle(color: Color(0xFFE90808)), fillColor: Colors.black26, filled: true),
+                                  decoration: InputDecoration(
+                                      label: Text("TASK $i DESCRIPTION"),
+                                      labelStyle: const TextStyle(color: Color(0xFFE90808)),
+                                      fillColor: Colors.black26,
+                                      filled: true),
                                   onChanged: (_) => setState(() {}),
                                 ),
+                                const SizedBox(height: 10),
+                                DropdownButton<ChecklistItemType>(
+                                    value: items[i].$3,
+                                    items: [
+                                      for (var e in ChecklistItemType.values)
+                                        DropdownMenuItem(value: e, child: Text(e.name.toUpperCase())),
+                                    ],
+                                    onChanged: (el) {
+                                      setState(() {
+                                        items[i] = (items[i].$1, items[i].$2, el ?? items[i].$3);
+                                      });
+                                    }),
                               ],
                             ),
                           ),
@@ -134,7 +169,7 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                   DeckButton(
                     onTap: () {
                       setState(() {
-                        items.add((TextEditingController(), TextEditingController()));
+                        items.add((TextEditingController(), TextEditingController(), ChecklistItemType.task));
                       });
                     },
                     child: const Text("NEW ITEM"),
@@ -156,14 +191,19 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                                   child: Column(
                                     children: [
                                       const SizedBox(height: 10),
-                                      const Text("Are you sure you want to delete this checklist?\nThis action cannot be undone."),
+                                      const Text(
+                                          "Are you sure you want to delete this checklist?\nThis action cannot be undone."),
                                       const SizedBox(height: 30),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          DeckButton(child: const Text("CANCEL"), onTap: () => Navigator.of(context).pop(false)),
+                                          DeckButton(
+                                              child: const Text("CANCEL"),
+                                              onTap: () => Navigator.of(context).pop(false)),
                                           const SizedBox(width: 10),
-                                          DeckButton(child: const Text("DELETE"), onTap: () => Navigator.of(context).pop(true)),
+                                          DeckButton(
+                                              child: const Text("DELETE"),
+                                              onTap: () => Navigator.of(context).pop(true)),
                                         ],
                                       ),
                                       const SizedBox(height: 10),
@@ -187,7 +227,13 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                         onTap: () {
                           items.removeWhere((element) => element.$1.text.isEmpty && element.$2.text.isEmpty);
 
-                          widget.onComplete(Checklist(title: titleController.text, items: items.map((e) => ChecklistItem(title: e.$1.text, description: e.$2.text, isDone: false)).toList(), tags: tags));
+                          widget.onComplete(Checklist(
+                              title: titleController.text,
+                              items: items
+                                  .map((e) =>
+                                      ChecklistItem(title: e.$1.text, description: e.$2.text, value: "", type: e.$3))
+                                  .toList(),
+                              tags: tags));
                           Navigator.of(context).pop();
                         },
                         child: const Text("SAVE"),

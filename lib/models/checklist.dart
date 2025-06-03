@@ -26,7 +26,7 @@ class Checklist {
   }
 
   Checklist asReset() {
-    final newItems = items.map((e) => e.copyWith(isDone: false)).toList();
+    final newItems = items.map((e) => e.copyWith(value: "")).toList(); 
     return Checklist(title: title, items: newItems, tags: tags);
   }
 
@@ -43,22 +43,29 @@ class Checklist {
   }
 }
 
+enum ChecklistItemType { task, note }
+
 class ChecklistItem {
   ChecklistItem({
     required this.title,
     required this.description,
-    required this.isDone,
+    required this.value,
+    required this.type,
   });
 
   final String title;
   final String description;
-  final bool isDone;
+  final String value;
+  final ChecklistItemType type;
+
+  bool get isDone => value == "1";
 
   factory ChecklistItem.fromJson(Map<String, dynamic> json) {
     return ChecklistItem(
       title: json["title"] ?? "",
       description: json["des"] ?? "",
-      isDone: json["done"] ?? false,
+      value: json["value"] ?? "0",
+      type: ChecklistItemType.values.firstWhere((e) => e.name == (json["type"] ?? "task")),
     );
   }
 
@@ -66,19 +73,22 @@ class ChecklistItem {
     return {
       "title": title,
       "des": description,
-      "done": isDone,
+      "value": value,
+      "type": type.name,
     };
   }
 
   ChecklistItem copyWith({
     String? title,
     String? description,
-    bool? isDone,
+    String? value,
+    ChecklistItemType? type,
   }) {
     return ChecklistItem(
       title: title ?? this.title,
       description: description ?? this.description,
-      isDone: isDone ?? this.isDone,
+      value: value ?? this.value,
+      type: type ?? this.type,
     );
   }
 }

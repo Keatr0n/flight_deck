@@ -59,7 +59,9 @@ class _MapScreenState extends State<MapScreen> {
                       context: context,
                       builder: (context) => Material(
                         color: Colors.black38,
-                        child: Padding(padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20), child: StayWidget(stay: stays[index], onClose: () => Navigator.of(context).pop())),
+                        child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                            child: StayWidget(stay: stays[index], onClose: () => Navigator.of(context).pop())),
                       ),
                     );
                   },
@@ -88,6 +90,28 @@ class _MapScreenState extends State<MapScreen> {
                 height: MediaQuery.of(context).size.height - 140,
                 width: MediaQuery.of(context).size.width,
                 locations: [for (var airport in airports) MapLocation.pointOnMap(airport.location)],
+              ),
+            ),
+            DeckWindowTab(
+              title: "AIRSPACE",
+              child: MapWidget(
+                key: const Key("airports"),
+                onTap: (index, location) {
+                  if (index == null) return;
+                  showDialog(
+                    context: context,
+                    builder: (context) => Material(
+                      color: Colors.black38,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                        child: AirportDisplay(airports[index]),
+                      ),
+                    ),
+                  );
+                },
+                height: MediaQuery.of(context).size.height - 140,
+                width: MediaQuery.of(context).size.width,
+                geoJson: AirportHandler.instance.auMergedGeoJson,
               ),
             )
           ],
