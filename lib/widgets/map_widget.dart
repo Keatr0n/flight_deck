@@ -184,7 +184,12 @@ class _MapWidgetState extends State<MapWidget> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final geoJson = GeoJsonParser();
+    final geoJson = GeoJsonParser(
+      defaultPolygonFillColor: const Color(0x13E90808),
+      defaultCircleMarkerBorderColor: const Color(0x22E90808),
+      defaultPolygonBorderColor: const Color(0x22E90808),
+      defaultPolylineColor: const Color(0x22E90808),
+    );
 
     if (widget.geoJson != null) {
       geoJson.parseGeoJson(widget.geoJson!);
@@ -209,7 +214,10 @@ class _MapWidgetState extends State<MapWidget> {
             tileProviders:
                 TileProviders({"openmaptiles": AssetVectorTileProvider("assets/map_tiles/{z}/{x}/{y}.pbf", 6, 0)}),
           ),
-          if (geoJson.polygons.isNotEmpty) PolygonLayer(polygons: geoJson.polygons),
+          if (geoJson.polygons.isNotEmpty)
+            PolygonLayer(
+              polygons: geoJson.polygons,
+            ),
           if (geoJson.polylines.isNotEmpty) PolylineLayer(polylines: geoJson.polylines),
           if (geoJson.circles.isNotEmpty) CircleLayer(circles: geoJson.circles),
           if (geoJson.markers.isNotEmpty) MarkerLayer(markers: geoJson.markers),

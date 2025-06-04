@@ -11,73 +11,75 @@ class AirportHandler {
   static AirportHandler get instance => _instance;
 
   static const String globalAirportFileName = 'assets/data_sets/airport_codes.csv';
-  // static const String auAirportFileName = 'assets/data_sets/au_apt.geojson';
-  // static const String auAirspaceFileName = 'assets/data_sets/au_asp.geojson';
-  // static const String auNavaidFileName = 'assets/data_sets/au_nav.geojson';
-  // static const String auObstacleFileName = 'assets/data_sets/au_obs.geojson';
+  static const String auAirportFileName = 'assets/data_sets/au_apt.geojson';
+  static const String auAirspaceFileName = 'assets/data_sets/au_asp.geojson';
+  static const String auNavaidFileName = 'assets/data_sets/au_nav.geojson';
+  static const String auObstacleFileName = 'assets/data_sets/au_obs.geojson';
   static const String auMergedFileName = 'assets/data_sets/au_merged.geojson';
 
   final List<Airport> _airports = [];
   List<Airport> get airports => _airports;
 
-  // final Map<String, dynamic> _auAirportGeoJson = {};
-  // Map<String, dynamic> get auAirportGeoJson => _auAirportGeoJson;
+  final Map<String, dynamic> _auAirportGeoJson = {};
+  Map<String, dynamic> get auAirportGeoJson => _auAirportGeoJson;
 
-  // final Map<String, dynamic> _auAirspaceGeoJson = {};
-  // Map<String, dynamic> get auAirspaceGeoJson => _auAirspaceGeoJson;
+  final Map<String, dynamic> _auAirspaceGeoJson = {};
+  Map<String, dynamic> get auAirspaceGeoJson => _auAirspaceGeoJson;
 
-  // final Map<String, dynamic> _auNavaidGeoJson = {};
-  // Map<String, dynamic> get auNavaidGeoJson => _auNavaidGeoJson;
+  final Map<String, dynamic> _auNavaidGeoJson = {};
+  Map<String, dynamic> get auNavaidGeoJson => _auNavaidGeoJson;
 
-  // final Map<String, dynamic> _auObstacleGeoJson = {};
-  // Map<String, dynamic> get auObstacleGeoJson => _auObstacleGeoJson;
+  final Map<String, dynamic> _auObstacleGeoJson = {};
+  Map<String, dynamic> get auObstacleGeoJson => _auObstacleGeoJson;
 
   final Map<String, dynamic> _auMergedGeoJson = {};
   Map<String, dynamic> get auMergedGeoJson => _auMergedGeoJson;
 
   Future<void> init() async {
-    // _auAirportGeoJson.addAll(jsonDecode(await rootBundle.loadString(auAirportFileName)));
-    // _auAirspaceGeoJson.addAll(jsonDecode(await rootBundle.loadString(auAirspaceFileName)));
-    // _auNavaidGeoJson.addAll(jsonDecode(await rootBundle.loadString(auNavaidFileName)));
-    // _auObstacleGeoJson.addAll(jsonDecode(await rootBundle.loadString(auObstacleFileName)));
-    _auMergedGeoJson.addAll(jsonDecode(await rootBundle.loadString(auMergedFileName)));
-    // all the other ones + auto merging can be done later once I figure out how to fix that stupid double as int bug in geojson
+    _auAirportGeoJson.addAll(jsonDecode(await rootBundle.loadString(auAirportFileName)));
+    _auAirspaceGeoJson.addAll(jsonDecode(await rootBundle.loadString(auAirspaceFileName)));
+    _auNavaidGeoJson.addAll(jsonDecode(await rootBundle.loadString(auNavaidFileName)));
+    _auObstacleGeoJson.addAll(jsonDecode(await rootBundle.loadString(auObstacleFileName)));
 
-    // _auMergedGeoJson.addAll({
-    //   "type": "FeatureCollection",
-    //   "features": [
-    //     ..._auAirportGeoJson['features'],
-    //     ..._auAirspaceGeoJson['features'],
-    //     ..._auNavaidGeoJson['features'],
-    //     ..._auObstacleGeoJson['features']
-    //   ]
-    // });
+    _auMergedGeoJson.addAll({
+      "type": "FeatureCollection",
+      "features": [
+        ..._auAirportGeoJson['features'],
+        ..._auAirspaceGeoJson['features'],
+        ..._auNavaidGeoJson['features'],
+        ..._auObstacleGeoJson['features']
+      ]
+    });
 
-    // final totalLen = _auAirportGeoJson['features'].length +
-    //     _auAirspaceGeoJson['features'].length +
-    //     _auNavaidGeoJson['features'].length +
-    //     _auObstacleGeoJson['features'].length;
+    final int totalLen = _auAirportGeoJson['features'].length +
+        _auAirspaceGeoJson['features'].length +
+        _auNavaidGeoJson['features'].length +
+        _auObstacleGeoJson['features'].length;
 
-    // for (var i = 1; i >= totalLen; i++) {
-    //   _auMergedGeoJson['features'][i]['id'] = i;
+    for (var i = 0; i < totalLen; i++) {
+      _auMergedGeoJson['features'][i]['id'] = i + 1;
 
-    //   if (_auMergedGeoJson['features'][i]['geometry']['type'] == "Point") {
-    //     _auMergedGeoJson['features'][i]['geometry']['coordinates'][0] =
-    //         (_auMergedGeoJson['features'][i]['geometry']['coordinates'][0].toDouble() + 0.0000001);
-    //     _auMergedGeoJson['features'][i]['geometry']['coordinates'][1] =
-    //         (_auMergedGeoJson['features'][i]['geometry']['coordinates'][1].toDouble() + 0.0000001);
-    //   } else if (_auMergedGeoJson['features'][i]['geometry']['type'] == "LineString") {
-    //     _auMergedGeoJson['features'][i]['geometry']['coordinates'][0][0] =
-    //         (_auMergedGeoJson['features'][i]['geometry']['coordinates'][0][0].toDouble() + 0.0000001);
-    //     _auMergedGeoJson['features'][i]['geometry']['coordinates'][0][1] =
-    //         (_auMergedGeoJson['features'][i]['geometry']['coordinates'][0][1].toDouble() + 0.0000001);
-    //   } else if (_auMergedGeoJson['features'][i]['geometry']['type'] == "Polygon") {
-    //     _auMergedGeoJson['features'][i]['geometry']['coordinates'][0][0][0] =
-    //         (_auMergedGeoJson['features'][i]['geometry']['coordinates'][0][0][0].toDouble() + 0.0000001);
-    //     _auMergedGeoJson['features'][i]['geometry']['coordinates'][0][0][1] =
-    //         (_auMergedGeoJson['features'][i]['geometry']['coordinates'][0][0][1].toDouble() + 0.0000001);
-    //   }
-    // }
+      if (_auMergedGeoJson['features'][i]['geometry']['type'] == "Point") {
+        _auMergedGeoJson['features'][i]['geometry']['coordinates'][0] =
+            (_auMergedGeoJson['features'][i]['geometry']['coordinates'][0].toDouble() + 0.0000001);
+        _auMergedGeoJson['features'][i]['geometry']['coordinates'][1] =
+            (_auMergedGeoJson['features'][i]['geometry']['coordinates'][1].toDouble() + 0.0000001);
+      } else if (_auMergedGeoJson['features'][i]['geometry']['type'] == "LineString") {
+        for (var j = 0; j < _auMergedGeoJson['features'][i]['geometry']['coordinates'].length; j++) {
+          _auMergedGeoJson['features'][i]['geometry']['coordinates'][j][0] =
+              (_auMergedGeoJson['features'][i]['geometry']['coordinates'][j][0].toDouble() + 0.0000001);
+          _auMergedGeoJson['features'][i]['geometry']['coordinates'][j][1] =
+              (_auMergedGeoJson['features'][i]['geometry']['coordinates'][j][1].toDouble() + 0.0000001);
+        }
+      } else if (_auMergedGeoJson['features'][i]['geometry']['type'] == "Polygon") {
+        for (var j = 0; j < _auMergedGeoJson['features'][i]['geometry']['coordinates'][0].length; j++) {
+          _auMergedGeoJson['features'][i]['geometry']['coordinates'][0][j][0] =
+              (_auMergedGeoJson['features'][i]['geometry']['coordinates'][0][j][0].toDouble() + 0.0000001);
+          _auMergedGeoJson['features'][i]['geometry']['coordinates'][0][j][1] =
+              (_auMergedGeoJson['features'][i]['geometry']['coordinates'][0][j][1].toDouble() + 0.0000001);
+        }
+      }
+    }
 
     final List<String> lines = (await rootBundle.loadString(globalAirportFileName)).split("\n");
 

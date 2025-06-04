@@ -15,7 +15,7 @@ class MakeChecklistWidget extends StatefulWidget {
 }
 
 class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
-  List<(TextEditingController, TextEditingController, ChecklistItemType)> items = [];
+  List<(TextEditingController, TextEditingController, ChecklistItemType, ChecklistItemOperation?)> items = [];
   TextEditingController titleController = TextEditingController();
   TextEditingController currentTagController = TextEditingController();
   List<String> tags = [];
@@ -25,8 +25,12 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
     if (widget.checklist != null) {
       for (var i = 0; i < widget.checklist!.items.length; i++) {
         final item = widget.checklist!.items[i];
-        items.add(
-            (TextEditingController()..text = item.title, TextEditingController()..text = item.description, item.type));
+        items.add((
+          TextEditingController()..text = item.title,
+          TextEditingController()..text = item.description,
+          item.type,
+          null
+        ));
       }
 
       titleController.text = widget.checklist!.title;
@@ -120,10 +124,14 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Checkbox(
-                            value: items[i].$1.text.isNotEmpty && items[i].$2.text.isNotEmpty,
-                            onChanged: null,
+                          const SizedBox(width: 10),
+                          DeckButton(
+                            onTap: () => setState(() {
+                              items.removeAt(i);
+                            }),
+                            child: const Text("X"),
                           ),
+                          const SizedBox(width: 5),
                           SizedBox(
                             width: MediaQuery.of(context).size.width - 100,
                             child: Column(
@@ -155,10 +163,58 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                                         DropdownMenuItem(value: e, child: Text(e.name.toUpperCase())),
                                     ],
                                     onChanged: (el) {
+                                      if (el == null) return;
+                                      ChecklistItemOperation? operation;
+
+                                      if (el == ChecklistItemType.calculated) {
+                                        operation = ChecklistItemOperation([], ChecklistItemOperationType.add);
+                                      }
+
                                       setState(() {
-                                        items[i] = (items[i].$1, items[i].$2, el ?? items[i].$3);
+                                        items[i] = (items[i].$1, items[i].$2, el, items[i].$4 ?? operation);
                                       });
                                     }),
+                                if (items[i].$3 == ChecklistItemType.calculated) ...[
+                                  const SizedBox(height: 10),
+                                  DropdownButton<ChecklistItemOperationType>(
+                                      value: items[i].$4?.type,
+                                      items: [
+                                        for (var e in ChecklistItemOperationType.values)
+                                          DropdownMenuItem(value: e, child: Text(e.name.toUpperCase())),
+                                      ],
+                                      onChanged: (el) {
+                                        if (el == null) return;
+
+                                        final operation =
+                                            (items[i].$4 ?? ChecklistItemOperation([], ChecklistItemOperationType.add))
+                                                .copyWith(type: el);
+
+                                        setState(() {
+                                          items[i] = (items[i].$1, items[i].$2, items[i].$3, operation);
+                                        });
+                                      }),
+                                  Wrap(
+                                    children: [
+                                      for (var j = 0; j < items.length; j++)
+                                        if (i != j)
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ChoiceChip(
+                                              label: Text(items[j].$1.text),
+                                              selected: items[i].$4?.indexes.contains(j) ?? false,
+                                              onSelected: (value) {
+                                                if (value) {
+                                                  items[i].$4?.indexes.add(j);
+                                                } else {
+                                                  items[i].$4?.indexes.remove(j);
+                                                }
+                                                setState(() {});
+                                              },
+                                            ),
+                                          ),
+                                    ],
+                                  ),
+                                ],
                               ],
                             ),
                           ),
@@ -169,7 +225,7 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                   DeckButton(
                     onTap: () {
                       setState(() {
-                        items.add((TextEditingController(), TextEditingController(), ChecklistItemType.task));
+                        items.add((TextEditingController(), TextEditingController(), ChecklistItemType.task, null));
                       });
                     },
                     child: const Text("NEW ITEM"),
@@ -230,8 +286,8 @@ class _MakeChecklistWidgetState extends State<MakeChecklistWidget> {
                           widget.onComplete(Checklist(
                               title: titleController.text,
                               items: items
-                                  .map((e) =>
-                                      ChecklistItem(title: e.$1.text, description: e.$2.text, value: "", type: e.$3))
+                                  .map((e) => ChecklistItem(
+                                      title: e.$1.text, description: e.$2.text, value: "", type: e.$3, operation: e.$4))
                                   .toList(),
                               tags: tags));
                           Navigator.of(context).pop();
