@@ -150,7 +150,7 @@ class _CheckListDisplayState extends State<CheckListDisplay> {
             DeckWindowTab(
               title: _checklist.title,
               child: SizedBox(
-                height: MediaQuery.of(context).size.height - 130,
+                height: MediaQuery.of(context).size.height - 140,
                 child: SingleChildScrollView(
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -175,7 +175,7 @@ class _CheckListDisplayState extends State<CheckListDisplay> {
                                 _checklist = _checklist.asReset();
                                 widget.onChange?.call(_checklist);
 
-                                if (mounted) setState(() {});
+                                Navigator.of(context).pop();
                               },
                               child: const Text("RESET"),
                             ),
